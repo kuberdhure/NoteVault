@@ -1,8 +1,13 @@
 import Card from "@/app/components/Card";
+import Header from "../components/Header";
 
-const Course=()=>{
-    return(
-        <div>
+
+import React from 'react'
+
+const BrowsePage = () => {
+  return (
+    <div>
+      <Header/>
         <main className='flex items-center flex-col mt-10 space-y-10'>
             <h1 className='text-3xl font-semibold'>All Your Notes in One Place</h1>
             <p className='text-2xl '>BROWSE BY</p>
@@ -13,6 +18,7 @@ const Course=()=>{
               <Card icon={'/paper.png'} navigate={'/papers'} title={'Papers'}/>
           </div>
       </div>
-    )
+  )
 }
-export default Course
+
+export default BrowsePage
