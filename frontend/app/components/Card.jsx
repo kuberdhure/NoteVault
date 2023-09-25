@@ -1,5 +1,4 @@
 'use client'
-import Course from '../../public/course.png'
 import Image from "next/image";
 import Link from "next/link";
 const Card=({title,icon,navigate})=>{
