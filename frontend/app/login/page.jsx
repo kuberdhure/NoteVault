@@ -7,7 +7,7 @@ const LoginPage = () => {
   return (
         <div>
             
-            <div className="mx-auto max-w-7xl px-4 mt-10">
+            <div className="mx-auto max-w-7xl px-4">
                 <div className="mx-auto max-w-5xl  py-12 md:py-24">
                 <div className='w-full flex flex-row justify-center align-middle text-center text-2xl font-bold text-gray-900 md:text-4xl'>
                 NoteVault

@@ -1,18 +1,13 @@
+'use client'
 import Card from "@/app/components/Card";
+import Header from "../components/Header";
 
 const Course=()=>{
     return(
-        <div>
-        <main className='flex items-center flex-col mt-10 space-y-10'>
-            <h1 className='text-3xl font-semibold'>All Your Notes in One Place</h1>
-            <p className='text-2xl '>BROWSE BY</p>
-        </main>
-          <div className='mt-5 flex justify-center items-center flex-wrap space-x-2 m-auto'>
-              <Card icon={'/course.png'} navigate={'/courses'} title={'Courses'}/>
-              <Card icon={'/book.png'} navigate={'/books'} title={'Books'}/>
-              <Card icon={'/paper.png'} navigate={'/papers'} title={'Papers'}/>
-          </div>
-      </div>
+        <div className='p-2'>
+            <h1 className='text-2xl font-semibold mb-2'>Browse By Books</h1>
+            <div className='h-1.5 w-40 bg-black'></div>
+        </div>
     )
 }
 export default Course

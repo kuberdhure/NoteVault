@@ -1,35 +1,30 @@
-'use client';
 import React from 'react'
-
+import Image from 'next/image'
+import AcceptButton from './AcceptButton'
+import RejectButton from './RejectButton'
+import Link from 'next/link'
 const Request = (props) => {
-  return (
-    // contains two colums one for data and other for accept/reject button
-    <div className='flex flex-row justify-between p-3 pl-5 pr-5 bg-red-200 w-11/12 rounded-lg mt-5'>
-        {/* data div */}
-        <div>
-            <h1 className='text-xl font-semibold'>{props.title}</h1>
+    return (
+        // contains two colums one for data and other for accept/reject button
+        <div className='flex flex-row justify-between p-3 pl-5 pr-5 bg-red-200 w-full rounded-lg mb-5'>
+            {/* data div */}
             <div>
-                {props.branch} | {props.course} | {props.type}
+                <Link href='' className='hover:underline font-light'><h1 className='text-xl font-semibold'>{props.title}</h1></Link>
+                <div >
+                    {props.branch} | {props.course} | {props.type}
+                </div>
+                <div className='mt-4 underline'>
+                    Uploaded By: {props.user}
+                </div>
             </div>
-            <div >
-                Uploaded By: {props.user}
-            </div>
+            {/* accept/reject div */}
             <div>
-                Class : {props.class}
+                <AcceptButton />
+                <RejectButton />
             </div>
-        </div>
-        {/* accept/reject div */}
-        <div>
-            <div>
-                Accept
-            </div>
-            <div>
-                Reject
-            </div>
-        </div>
 
-    </div>
-  )
+        </div>
+    )
 }
 
 export default Request
