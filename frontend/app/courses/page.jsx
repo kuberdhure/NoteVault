@@ -96,9 +96,14 @@ const Course = () => {
                     list.map((item, index) => {
 
                         return (
-                            <div className='w-75 h-40 bg-white rounded-lg border border-black p-4 items-center justify-center flex flex-col hover:w-70 m-5'>
+                            <div key={item.title} className='w-75 h-40 bg-white rounded-lg border border-black p-4 items-center justify-center flex flex-col hover:w-70 m-5'>
                                 <div className='font-bold text-xl text-center'>
-                                    <Link href={'/courses'}>
+                                    <Link href={{
+                                        pathname:'/materials',
+                                        query: {
+                                            courseName:item.title
+                                        }
+                                    }}>
                                         {item.title}
                                     </Link>
                                 </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 // import Image from 'next/image'
-import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
+// import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
 
 
 function BookComponent(props) {
