@@ -33,21 +33,23 @@ class Notes(models.Model):
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
     approved_by = models.CharField(max_length=100)
-    course = models.CharField(max_length=100)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
+    # count = models.IntegerField(default=0)
 
-class Books(models.Model):
+class Book(models.Model):
     title = models.CharField(max_length=100)
     file = models.FileField()
     is_approved = models.BooleanField(default=False)
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
     approved_by = models.CharField(max_length=100)
-    course = models.CharField(max_length=100)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
     author = models.CharField(max_length=100)
     edition = models.CharField(max_length=100)
     cover_page = models.ImageField()
+    count = models.IntegerField(default=0)
 
-class Papers(models.Model):
+class Paper(models.Model):
     CATEGORY_CHOICES = [
         ('In Sem', 'In Sem'),
         ('Mid Sem', 'Mid Sem'),
@@ -62,17 +64,23 @@ class Papers(models.Model):
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
     approved_by = models.CharField(max_length=100)
-    course = models.CharField(max_length=100)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
     year = models.DateField()
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
 
-class Videos(models.Model):
+class Video(models.Model):
     title = models.CharField(max_length=100)
     link = models.CharField(max_length=200)
     is_approved = models.BooleanField(default=False)
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
     approved_by = models.CharField(max_length=100)
-    course = models.CharField(max_length=100)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
+    # count = models.IntegerField(default=0)
 
-
+class Course(models.Model):
+    title = models.CharField(max_length=100)
+    course_code = models.CharField(max_length=100)
+    course_credits = models.IntegerField()
+    count = models.IntegerField(default=0)
+    
