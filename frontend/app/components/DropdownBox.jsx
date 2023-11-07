@@ -14,11 +14,13 @@ const DropdownBox = (props) => {
 
     setTimeout(() => {
         if (selectedValue == "Question Paper") {
+            props.setBook(false);
             props.setIsLink(false);
-          props.setIsQuestionPaper(true)
+            props.setIsQuestionPaper(true)
         }
 
         else if (selectedValue == "Video Link") {
+            props.setBook(false);
             props.setIsQuestionPaper(false)
             props.setIsLink(true);
         }
@@ -26,11 +28,13 @@ const DropdownBox = (props) => {
         else if(selectedValue == "Reference Book"){
             props.setIsQuestionPaper(false)
             props.setIsLink(false);
+            props.setBook(true);
         }
 
         else if(selectedValue == "Self Made Notes"){
             props.setIsQuestionPaper(false)
             props.setIsLink(false);
+            props.setBook(false);
         }
 
       }, 0);
