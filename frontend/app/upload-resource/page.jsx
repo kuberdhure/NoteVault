@@ -25,6 +25,7 @@ const Upload = () => {
     // flag to check which option is selected
     const [isQuestionPaper, setIsQuestionPaper] = useState(false);
     const [isLink, setIsLink] = useState(false)
+    const [isBook, setIsBook] = useState(false);
 
     return (
         <div>
@@ -53,6 +54,7 @@ const Upload = () => {
                         options={material}
                         setIsQuestionPaper={setIsQuestionPaper}
                         setIsLink={setIsLink}
+                        setBook={setIsBook}
                         mt={5}
                         mb={5}
                     />
@@ -108,6 +110,28 @@ const Upload = () => {
                                 />
 
                             </div> : <></>
+                    }
+
+                    {
+                        isBook ? <div className='flex flex-col w-full mb-5'>
+                            <input
+                                className="flex h-10 w-1/2 rounded-md border border-black bg-transparent px-3 py-2 text-sm "
+                                type="text"
+                                id="author"
+                                placeholder="Author Name"
+                            />
+
+                            <div className='flex flex-col w-full mt-5'>
+                                <input
+                                    className="flex h-10 w-1/2 rounded-md border border-black bg-transparent px-3 py-2 text-sm "
+                                    type="number"
+                                    id="edition"
+                                    placeholder="Edition"
+                                />
+
+                            </div>
+
+                        </div> : <></>
                     }
 
 
