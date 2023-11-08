@@ -9,8 +9,20 @@ import Course from "@/app/components/Course";
 import Browse from "@/app/components/Browse";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from 'react';
+
+
 
 export default function Home() {
+
+    // useEffect(() => {
+    //     fetch('http://localhost:8000/home/')
+    //     .then(response => response.json())
+    //     .then(data => console.log(data));
+     
+    // }, [])
+    
+
   return (
       <div>
           <div className='ml-5 mt-4'>
