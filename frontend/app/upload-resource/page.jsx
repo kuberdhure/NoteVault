@@ -13,6 +13,7 @@ const Upload = () => {
     const material = ["Reference Book", "Question Paper", "Self Made Notes", "Video Link"]
     const type = ["MSE", "ESE"]
 
+
     // list of years 
     const startYear = 1995;
     const currentYear = (new Date()).getFullYear();
@@ -26,6 +27,14 @@ const Upload = () => {
     const [isQuestionPaper, setIsQuestionPaper] = useState(false);
     const [isLink, setIsLink] = useState(false)
     const [isBook, setIsBook] = useState(false);
+
+
+    // user data
+
+    const[userBranch, setUserBranch] = useState('');
+    const[useCourse, setUserCourse] = useState('');
+    
+
 
     return (
         <div>

@@ -2,8 +2,41 @@
 import React from 'react'
 import reading from '/public/reading.json'
 import Lottie from 'lottie-react'
-
+import {useState} from 'react'
 const LoginPage = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const handleLogin = () => {
+        // Replace with your actual backend API endpoint URL
+        const apiUrl = 'http://localhost:8000/api/login/';
+    
+        // Create a payload with the login details
+        const payload = {
+          username: username,
+          password: password,
+        };
+    
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        })
+          .then((response) => {
+            if (response.ok) {
+              // Successful login, you can redirect the user or perform other actions here
+              console.log('Login successful');
+            } else {
+              // Handle login errors here
+              console.error('Login failed');
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      };
+    
   return (
         <div>
             
@@ -30,27 +63,32 @@ const LoginPage = () => {
                                                 className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
                                                 type="text"
                                                 id="user_name"
+                                                value={username}
                                                 placeholder="Username"
+                                                onChange={(e) => setUsername(e.target.value)}
                                             />
                                         </div>
                                         
                                     <div className="grid w-full  items-center gap-1.5">
                                         <label
-                                            className="text-sm font-medium leading-none text-gray-700 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                            className="text-sm font-medium leading-none text-black peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                             htmlFor="email"
                                         >
-                                            Email
+                                            Password
                                         </label>
                                         <input
                                             className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
                                             type="text"
+                                            value={password}
                                             id="email"
-                                            placeholder="Email"
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            placeholder="Password"
                                         />
                                     </div>
                                 
                                     <button
                                         type="button"
+                                        onClick={handleLogin}
                                         className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                                     >
                                         Login

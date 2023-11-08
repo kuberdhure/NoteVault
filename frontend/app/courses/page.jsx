@@ -4,6 +4,15 @@ import Link from 'next/link'
 
 const Course = () => {
 
+    const [data,setData]=useState(null);
+    
+    useEffect(()=>{
+        const response=fetch('http://localhost:8000/course/')
+        .then((res)=>res.json())
+        .then((data)=>setData(data))
+        .catch((e)=>console.log(e))
+    },[])
+
     const list = [
         {
             title: "Engineering Calculus",

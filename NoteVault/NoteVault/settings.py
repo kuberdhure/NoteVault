@@ -30,7 +30,20 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'vault.CustomUser'
 
-CORS_ORGIN_ALLOW_ALL = True
+
+
+ALLOWED_HOSTS = ['*']
+
+# CORS_ORGIN_ALLOW_ALL = True
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ORIGINS = [
+#     "http://localhost:3000",
+# ]
+
+# Allow cookies to be included with CORS requests
+CORS_ALLOW_CREDENTIALS = True
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -53,6 +66,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Place this line before CommonMiddleware
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'NoteVault.urls'
@@ -90,7 +105,6 @@ DATABASES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

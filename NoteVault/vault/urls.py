@@ -19,4 +19,13 @@ from .views import *
 
 urlpatterns = [
     path('login/', LoginView.as_view()),
+    path('home/', Home.as_view()),
+    path('course/', CourseAllView.as_view()),
+    path('books/', BookView.as_view()),
+    path('papers/', PaperView.as_view()),
+    path('course/', CourseView.as_view()),
+    path('notes/', NotesView.as_view()),
+    path('upload/', UploadView.as_view()),
+    path('download/', DownloadView.as_view()),
+    path('approve/', ApproveView.as_view()),
 ]

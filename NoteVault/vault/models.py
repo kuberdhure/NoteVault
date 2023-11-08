@@ -38,7 +38,7 @@ class Notes(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=100)
-    file = models.FileField()
+    file = models.CharField(max_length=1024)
     is_approved = models.BooleanField(default=False)
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
@@ -46,7 +46,7 @@ class Book(models.Model):
     course = models.ForeignKey('Course', on_delete=models.CASCADE)
     author = models.CharField(max_length=100)
     edition = models.CharField(max_length=100)
-    cover_page = models.ImageField()
+    cover_page = models.CharField(max_length=1024)
     count = models.IntegerField(default=0)
 
 class Paper(models.Model):

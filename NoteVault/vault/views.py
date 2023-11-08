@@ -20,6 +20,7 @@ class Home(APIView):
             "courses": courses
         }
         return Response({"data" : data, "message": " Got some data"})
+        # return Response({"data" : "hello", "message": " Got some data"})
 
 class CourseAllView(APIView):
     
@@ -27,7 +28,7 @@ class CourseAllView(APIView):
         courses = Course.objects.all()
         return Response({"courses" : courses, "message": " Got some data"})
     
-class Login(APIView):
+class LoginView(APIView):
     
     def post(self, request):
         username = request.data.get("username")
