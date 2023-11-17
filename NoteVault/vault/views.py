@@ -88,6 +88,7 @@ class UploadView(APIView):
         return Response({"courses" : courses, "message": " Got some data"})
 
     def post(self, request):
+        print(request.data)
         title = request.data.get("title")
         file = request.data.get("file")
         course = request.data.get("course")

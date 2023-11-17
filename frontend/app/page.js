@@ -51,7 +51,7 @@ export default function Home() {
         <div className="h-1.5 w-40 bg-black"></div>
       </div>
     
-      {data ? 
+      
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3">
           <BookComponent
             cover="/book.png"
@@ -89,9 +89,7 @@ export default function Home() {
             imgAlt={"Book"}
           />
         </div>
-      : 
-        <div></div>
-      }
+      
       <div className="mt-4 ml-5 mb-4 p-1">
         <div className="flex flex-row justify-between">
           <h2 className="font-bold text-2xl">Courses</h2>
