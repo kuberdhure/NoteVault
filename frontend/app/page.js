@@ -11,24 +11,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Home() {
-  const [data, setData] = useState(null);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/home/`);
-      const respo = response.data;
-      console.log(respo);
-      setData(respo);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-  
-
   return (
     <div>
       <div className="ml-5 mt-4">
