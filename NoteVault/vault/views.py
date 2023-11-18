@@ -51,7 +51,6 @@ class BookView(APIView):
             if book.author not in authors:
                 authors.append(book.author)
         return Response({"books" : books, "courses" : courses,  "authors" : authors, "message": " Got some data"})
-
 class PaperView(APIView):
     
     def get(self, request):

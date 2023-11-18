@@ -1,8 +1,18 @@
 'use client'
 import BookComponent from "../components/BookComponent"
 import React from "react";
+import {useState} from 'react';
 
+import axios from "axios";
 const Books = () => {
+    const [course,setCourse]=useState("");
+    const [author,setAuthor]=useState("");
+    const handleSubmit=async()=>{
+        console.log("course",course);
+        console.log("author",author);
+        const response=await axios.get("http://localhost:8000/api/books/");
+        console.log(response);
+    }
     return (
         <div className='flex flex-row overflow-hidden'>
             <div className="hidden sm:block">
@@ -27,6 +37,9 @@ const Books = () => {
                                 placeholder="Search"
                             />
                         </div>
+                    </div>
+                    <div className="mt-4 justify-center items-center">
+                        <button className="border border-solid border-black p-2 rounded-md" onClick={handleSubmit}>Apply</button>
                     </div>
                 </aside>
             </div>

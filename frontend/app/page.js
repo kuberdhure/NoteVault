@@ -7,8 +7,6 @@ import Course from "@/app/components/Course";
 import Browse from "@/app/components/Browse";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import axios from "axios";
 
 export default function Home() {
   return (
@@ -22,7 +20,7 @@ export default function Home() {
             </Link>
             <Link href={"/books"}>
               <Image
-                src={"/right-arrow.png"}
+                src={"/right.svg"}
                 alt={"Arrow"}
                 height={25}
                 width={25}
@@ -81,7 +79,7 @@ export default function Home() {
             </Link>
             <Link href={"/books"}>
               <Image
-                src={"/right-arrow.png"}
+                src="/right.svg"
                 alt={"Arrow"}
                 height={25}
                 width={25}

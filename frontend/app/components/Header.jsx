@@ -52,13 +52,13 @@ const Header = () => {
                     />
                 </div>
                 <div className='flex grow justify-evenly ml-10'>
-                    <Image src={'/notification.png'} alt={"notification"} height={25} width={25}/>
+                    <Image src={'/Notification.svg'} alt={"notification"} height={25} width={25}/>
                 </div>
                 <div className="ml-2 mt-2 hidden lg:block">
                     <span className="relative inline-block">
                         <img
                             className="h-10 w-10 rounded-full"
-                            src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
+                            src="/Profile.svg"
                             alt="Dan_Abromov"
                         />
                         <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-600 ring-2 ring-white"></span>
