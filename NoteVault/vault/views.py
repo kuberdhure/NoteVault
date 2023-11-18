@@ -4,7 +4,12 @@ from rest_framework.response import Response
 from django.http import FileResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
+from django.middleware.csrf import get_token
 from .models import *
+from django.forms.models import model_to_dict
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+
 
 # Create your views here.
 
@@ -27,17 +32,26 @@ class CourseAllView(APIView):
     def get(self, request):
         courses = Course.objects.all()
         return Response({"courses" : courses, "message": " Got some data"})
-    
+
+class CSRF(APIView):
+    def get_csrf_token(request):
+        """
+        View to retrieve the CSRF token.
+        """
+        token = get_token(request)
+        return JsonResponse({'csrftoken': token})   
 class LoginView(APIView):
     
     def post(self, request):
+        csrf_token = get_token(request)
         username = request.data.get("username")
         password = request.data.get("password")
         print(username, password)
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            return Response({"user" : user,"message": "Login Successful!"})
+            new_user=model_to_dict(user,fields=['username','email'])
+            return Response({"user" : new_user,"message": "Login Successful!"})
         else:
             return Response({"message": "Unsuccessful Login"})
         
@@ -47,10 +61,12 @@ class BookView(APIView):
         books = Book.objects.all()
         courses = Course.objects.all()
         authors=[]
+        new_books=[]
         for book in books:
             if book.author not in authors:
                 authors.append(book.author)
-        return Response({"books" : books, "courses" : courses,  "authors" : authors, "message": " Got some data"})
+            new_books.append(model_to_dict(book))
+        return Response({"books" : new_books,"authors" : authors, "message": " Got some data"})
 class PaperView(APIView):
     
     def get(self, request):
@@ -91,22 +107,23 @@ class UploadView(APIView):
         title = request.data.get("title")
         file = request.data.get("file")
         course = request.data.get("course")
+        course=Course.objects.get(title=course)
         material_type = request.data.get("material_type")
-        if material_type == "books":
+        if material_type == "Reference Book":
             author = request.data.get("author")
             edition = request.data.get("edition")
             book = Book.objects.create(title=title, file=file, course=course, author=author, edition=edition, uploaded_by=request.user.username, is_approved=False)
             book.save()
-        elif material_type == "papers":
+        elif material_type == "Question Paper":
             year = request.data.get("year")
             category = request.data.get("category")
             paper = Paper.objects.create(title=title, file=file, course=course, year=year, category=category, uploaded_by=request.user.username, is_approved=False)
             paper.save()
-        elif material_type == "videos":
+        elif material_type == "Videos":
             link = request.data.get("link")
             video = Video.objects.create(title=title, link=link, course=course, uploaded_by=request.user.username, is_approved=False)
             video.save()
-        elif material_type == "notes":
+        elif material_type == "Notes":
             notes = Notes.objects.create(title=title, file=file, course=course, uploaded_by=request.user.username, is_approved=False)
             notes.save()
         return Response({"message": " Uploaded Successfully!"}) 

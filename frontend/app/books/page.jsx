@@ -1,17 +1,31 @@
 'use client'
 import BookComponent from "../components/BookComponent"
-import React from "react";
+import React, { useEffect } from "react";
 import {useState} from 'react';
-
+import CircularProgress from '@mui/material/CircularProgress'
 import axios from "axios";
+import Box from '@mui/material/Box';
 const Books = () => {
     const [course,setCourse]=useState("");
     const [author,setAuthor]=useState("");
+    const [books,setBooks]=useState([]);
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("http://localhost:8000/api/books/");
+                setBooks(response.data.books);
+                setLoading(false)
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setLoading(false)
+            }
+        };
+        fetchData();
+    }, []);
+    
     const handleSubmit=async()=>{
-        console.log("course",course);
-        console.log("author",author);
-        const response=await axios.get("http://localhost:8000/api/books/");
-        console.log(response);
+        console.log("Books",books);
     }
     return (
         <div className='flex flex-row overflow-hidden'>
@@ -44,43 +58,27 @@ const Books = () => {
                 </aside>
             </div>
             <div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <BookComponent
-                        cover="/book.png"
-                        title="Introduction to Algorithms"
-                        author="Thomas Cormen"
-                        domain="Data Structures"
-                        imgAlt="Book"
-                    />
-                    <BookComponent
-                        cover="/book.png"
-                        title="Introduction to Algorithms"
-                        author="Thomas Cormen"
-                        domain="Data Structures"
-                        imgAlt="Book"
-                    />
-                    <BookComponent
-                        cover="/book.png"
-                        title="Introduction to Algorithms"
-                        author="Thomas Cormen"
-                        domain="Data Structures"
-                        imgAlt="Book"
-                    />
-                    <BookComponent
-                        cover="/book.png"
-                        title="Introduction to Algorithms"
-                        domain="Data Structures"
-                        author="Thomas Cormen"
-                        imgAlt="Book"
-                    />
-                    <BookComponent
-                        cover="/book.png"
-                        title="Introduction to Algorithms"
-                        domain="Data Structures"
-                        author="Thomas Cormen"
-                        imgAlt="Book"
-                    />
-                </div>
+            {loading ? (
+                   
+                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh',width:'1/2' }}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    // Render your book components once data is fetched
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {books.map((book, index) => (
+                            <BookComponent
+                                key={index}
+                                cover={book.cover_page}
+                                title={book.title}
+                                author={book.author}
+                                file={book.file}
+                                domain={book.domain}
+                                imgAlt="Book"
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
 

@@ -23,8 +23,8 @@ firebase.initializeApp(firebaseConfig);
 const Upload = () => {
 
     // list of options for rendering different options
-    const courses = ["Operating System", "Computer Networks", "Design & Analysis of Algorithms", "Theory of Computation"]
-    const material = ["Reference Book", "Question Paper", "Notes", "Video Link"]
+    const courses = ["Operating System", "Computer Networks", "Design & Analysis of Algorithms", "Theory of Computation","DSA"]
+    const material = ["Reference Book", "Question Paper", "Notes", "Videos"]
     const type = ["End Sem","Mid Sem", "In Sem", "Quiz", "Assignment", "Others"]
 
     // list of years 

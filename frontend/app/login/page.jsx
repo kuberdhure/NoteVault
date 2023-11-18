@@ -3,39 +3,12 @@ import React from 'react'
 import reading from '/public/reading.json'
 import Lottie from 'lottie-react'
 import {useState} from 'react'
+import {useEffect} from "react";
+
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const handleLogin = () => {
-        // Replace with your actual backend API endpoint URL
-        const apiUrl = 'http://localhost:8000/api/login/';
-    
-        // Create a payload with the login details
-        const payload = {
-          username: username,
-          password: password,
-        };
-    
-        fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        })
-          .then((response) => {
-            if (response.ok) {
-              // Successful login, you can redirect the user or perform other actions here
-              console.log('Login successful');
-            } else {
-              // Handle login errors here
-              console.error('Login failed');
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
-      };
+
     
   return (
         <div>
@@ -88,7 +61,7 @@ const LoginPage = () => {
                                 
                                     <button
                                         type="button"
-                                        onClick={handleLogin}
+                                        // onClick={handleLogin}
                                         className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                                     >
                                         Login

@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from "next/link";
 // import Image from 'next/image'
 // import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
 
@@ -13,7 +14,7 @@ function BookComponent(props) {
             </div>
             <hr className='w-55'></hr>
             <div className='flex flex-col items-center justify-center group hover:text-white'>
-                {props.title && <h1 className="mt-2 mb-2">{props.title}</h1>}
+                {props.title&&props.file && <Link href={props.file}><h1 className='mt-2 text-gray-400'>{props.title}</h1></Link>}
                 {props.author && <p className="mt-2 text-gray-400 group-hover:text-white">{props.author}</p>}
                 {props.domain && <p className="mb-2 text-gray-400 group-hover:text-white">{props.domain}</p>}
             </div>
