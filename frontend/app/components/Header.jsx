@@ -4,7 +4,8 @@ import Image from "next/image";
 const Header = () => {
     return (
         <div className="sticky top-0 z-30 w-full bg-white">
-            <div className="mx-auto flex max-w-7xl items-center justify-evenly px-4 py-2 sm:px-6 lg:px-8">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
+                <div className='flex flex-row'>
                 <div className="inline-flex items-center space-x-2">
                     <Link href={'/'}>
                         <svg
@@ -44,17 +45,20 @@ const Header = () => {
                         </li>
                     </ul>
                 </div>
-                <div className="flex grow justify-evenly">
+                </div>
+                
+                {/* <div className="flex grow justify-evenly">
                     <input
                         className="flex h-10 w-[250px] rounded-md bg-gray-100 px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                         type="text"
                         placeholder="Serach"
                     />
-                </div>
-                <div className='flex grow justify-evenly ml-10'>
-                    <Image src={'/Notification.svg'} alt={"notification"} height={25} width={25}/>
-                </div>
-                <div className="ml-2 mt-2 hidden lg:block">
+                </div> */}
+               
+             
+                <div className="flex flex-row ml-2 mt-2">
+
+                    <Image src={'/Notification.svg'} alt={"notification"} height={25} width={25} className='mr-14'/>
                     <span className="relative inline-block">
                         <img
                             className="h-10 w-10 rounded-full"
@@ -64,10 +68,8 @@ const Header = () => {
                         <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-600 ring-2 ring-white"></span>
                     </span>
                 </div>
-                <div className="ml-2 lg:hidden">
-                </div>
+                
             </div>
-        <div className='bg-gray-400 h-0.5 w-full'></div>
     </div>
 
     );

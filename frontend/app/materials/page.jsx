@@ -5,7 +5,13 @@ import React from "react";
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import ReactPlayer from "react-player";
 import {useSearchParams} from "next/navigation";
+import { useEffect ,useState} from "react";
+import axios from "axios";
 const Material=()=>{
+    const [books,setBooks]=useState([]);
+    const [notes,setNotes]=useState([]);
+    const [videos,setVideos]=useState([]);
+    const [papers,setPapers]=useState([]);
     const slideLeft = () => {
         var slider = document.getElementById('slider');
         slider.scrollLeft = slider.scrollLeft - 500;
@@ -26,18 +32,43 @@ const Material=()=>{
     };
     const searchParams=useSearchParams();
     const title=searchParams.get('courseName')
+    useEffect(()=>{
+        const fetchData=async()=>{
+            try{
+                const response=await axios.get("http://localhost:8000/api/course/",{
+                params:{
+                    title:title
+                }
+            })
+            setBooks(response.data.books);
+            setVideos(response.data.videos);
+            setNotes(response.data.notes);
+            setPapers(response.data.papers);
+            console.log("Response",response);
+            }catch(e){
+                console.log(e)
+            }
+        }
+        fetchData()
+    },[])
+    
     return(
         <div>
             <h2 className='font-semibold text-2xl mb-2 mt-2 ml-2'>Books for {title}</h2>
 
             <div className='grid grid-cols-1 mb-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3'>
-                <BookComponent
+                {
+                    books.map((book,index)=>{
+                         <BookComponent
                     cover="/book.png"
                     title ={title}
                     author = "Thomas Cormen"
                     domain="Data Structures"
                     imgAlt={'Book'}
                 />
+                    })
+                }
+               
                 <BookComponent
                     cover="/book.png"
                     title = {title}

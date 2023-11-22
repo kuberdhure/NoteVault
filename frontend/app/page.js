@@ -7,8 +7,32 @@ import Course from "@/app/components/Course";
 import Browse from "@/app/components/Browse";
 import Image from "next/image";
 import Link from "next/link";
+import {useState,useEffect} from 'react';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress'
+import axios from "axios";
+
+
 
 export default function Home() {
+
+  const [loading, setLoading] = useState(true)
+  const [books,setBooks]=useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const response = await axios.get("http://localhost:8000/api/books/");
+            setBooks(response.data.books);
+            setLoading(false)
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false)
+        }
+    };
+    fetchData();
+}, []);
+
   return (
     <div>
       <div className="ml-5 mt-4">
@@ -31,45 +55,28 @@ export default function Home() {
         <div className="h-1.5 w-40 bg-black"></div>
       </div>
     
-      
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3">
-          <BookComponent
-            cover="/book.png"
-            title="Introduction to Algorithms"
-            author="Thomas Cormen"
-            domain="Data Structures"
-            imgAlt={"Book"}
-          />
-          <BookComponent
-            cover="/book.png"
-            title="Introduction to Algorithms"
-            author="Thomas Cormen"
-            domain="Data Structures"
-            imgAlt={"Book"}
-          />
-          <BookComponent
-            cover="/book.png"
-            title="Introduction to Algorithms"
-            author="Thomas Cormen"
-            domain="Data Structures"
-            imgAlt={"Book"}
-          />
-          <BookComponent
-            cover="/book.png"
-            title="Introduction to Algorithms"
-            domain="Data Structures"
-            author="Thomas Cormen"
-            imgAlt={"Book"}
-          />
-          <BookComponent
-            cover="/book.png"
-            title="Introduction to Algorithms"
-            domain="Data Structures"
-            author="Thomas Cormen"
-            imgAlt={"Book"}
-          />
-        </div>
-      
+      {loading ? (
+                   
+                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh',width:'1/2' }}>
+                      <CircularProgress />
+                  </Box>
+              ) : (
+                  // Render your book components once data is fetched
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3">
+                  {books.map((book, index) => (
+                          <BookComponent
+                              key={index}
+                              cover={book.cover_page}
+                              title={book.title}
+                              author={book.author}
+                              file={book.file}
+                              domain={book.domain}
+                              imgAlt="Book"
+                          />
+                      ))}
+                  </div>
+              )}
+             
       <div className="mt-4 ml-5 mb-4 p-1">
         <div className="flex flex-row justify-between">
           <h2 className="font-bold text-2xl">Courses</h2>
@@ -77,7 +84,7 @@ export default function Home() {
             <Link href={"/books"}>
               <p className="text-right">Explore</p>
             </Link>
-            <Link href={"/books"}>
+            <Link href={"/courses"}>
               <Image
                 src="/right.svg"
                 alt={"Arrow"}
@@ -101,13 +108,14 @@ export default function Home() {
           Browse By
         </p>
         <div className="flex flex-row justify-evenly mb-4 mt-4 flex-wrap">
-          <Browse browse_image={"/course.png"} browse_name={"Course"} />
-          <Browse browse_image={"/book.png"} browse_name={"Books"} />
-          <Browse browse_image={"/paper.png"} browse_name={"Papers"} />
-          <Browse browse_image={"/Notes.png"} browse_name={"Notes"} />
+          <Link href='/courses'><Browse browse_image={"/course.png"} browse_name={"Course"} /></Link>
+          <Link href='/books'><Browse browse_image={"/book.png"} browse_name={"Books"} /></Link>
+          <Link href='/papers'><Browse browse_image={"/paper.png"} browse_name={"Papers"}/></Link>
+          <Link href='/notes'><Browse browse_image={"/Notes.png"} browse_name={"Notes"}/></Link>
           <Browse
             browse_image={"/University.png"}
             browse_name={"Universities"}
+            browse_url={'/university'}
           />
           <Browse browse_image={"/video.png"} browse_name={"Videos"} />
         </div>

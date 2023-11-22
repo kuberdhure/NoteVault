@@ -3,6 +3,7 @@ import Image from 'next/image'
 import AcceptButton from './AcceptButton'
 import RejectButton from './RejectButton'
 import Link from 'next/link'
+
 const Request = (props) => {
     return (
         // contains two colums one for data and other for accept/reject button
@@ -11,7 +12,7 @@ const Request = (props) => {
             <div>
                 <Link href='' className='hover:underline font-light'><h1 className='text-xl font-semibold'>{props.title}</h1></Link>
                 <div >
-                    {props.branch} | {props.course} | {props.type}
+                  {props.course} | {props.type}
                 </div>
                 <div className='mt-4 underline'>
                     Uploaded By: {props.user}
@@ -19,8 +20,8 @@ const Request = (props) => {
             </div>
             {/* accept/reject div */}
             <div>
-                <AcceptButton />
-                <RejectButton />
+                <AcceptButton title={props.title} type={props.type}/>
+                <RejectButton title={props.title} type={props.type}/>
             </div>
 
         </div>

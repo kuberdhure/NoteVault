@@ -1,90 +1,29 @@
-
+'use client'
 import Link from 'next/link'
-
-
+import {useState,useEffect} from 'react';
+import axios from 'axios';
 const Course = () => {
 
-    const [data,setData]=useState(null);
-    
+    const [data,setData]=useState([]);
+    const [loading, setLoading] = useState(true);
     useEffect(()=>{
-        const response=fetch('http://localhost:8000/course/')
-        .then((res)=>res.json())
-        .then((data)=>setData(data))
-        .catch((e)=>console.log(e))
+        const fetchData=async()=>{
+            try{
+                const response=await axios.get("http://127.0.0.1:8000/api/courses/")
+                
+                setData(response.data.courses);
+                setLoading(false);
+            }
+            catch (error) {
+                console.error("Error fetching data:", error);
+                setLoading(false);
+            }
+        }
+        fetchData()
+       
     },[])
 
-    const list = [
-        {
-            title: "Engineering Calculus",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Engineering Chemistry",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Biology for Engineers",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Engineering Mechanics",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Problem Solving using Imperative Programming",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Digital Systems and Microprocessor",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Communication Skills",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Engineering Calculus",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Engineering Chemistry",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Biology for Engineers",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Engineering Mechanics",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Problem Solving using Imperative Programming",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Digital Systems and Microprocessor",
-            subtitle: "CS201"
-        },
-
-        {
-            title: "Communication Skills",
-            subtitle: "CS201"
-        }
-    ]
-
+    
     return (
         <div className="m-5 p-5">
             <div className='flex justify-around'>
@@ -102,7 +41,10 @@ const Course = () => {
 
             <div className='grid grid-cols-5 gap-4'>
                 {
-                    list.map((item, index) => {
+                    loading?(
+                        <div>Loading...</div>
+                    ):
+                    data.map((item, index) => {
 
                         return (
                             <div key={item.title} className='w-75 h-40 bg-white rounded-lg border border-black p-4 items-center justify-center flex flex-col hover:w-70 m-5'>
@@ -117,7 +59,7 @@ const Course = () => {
                                     </Link>
                                 </div>
                                 <div className='font-semibold text-gray-500'>
-                                    {item.subtitle}
+                                    {item.course_code}
                                 </div>
                             </div>
                         )

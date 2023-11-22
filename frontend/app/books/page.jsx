@@ -14,6 +14,7 @@ const Books = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get("http://localhost:8000/api/books/");
+                console.log("response",response);
                 setBooks(response.data.books);
                 setLoading(false)
             } catch (error) {
@@ -25,7 +26,9 @@ const Books = () => {
     }, []);
     
     const handleSubmit=async()=>{
-        console.log("Books",books);
+        console.log("Author",author);
+        console.log("Course",course);
+        
     }
     return (
         <div className='flex flex-row overflow-hidden'>
@@ -33,12 +36,14 @@ const Books = () => {
                 <aside className="flex h-screen w-64 flex-col border-r border-black bg-white px-5 py-5">
                     <p className='font-bold text-2xl'>Sort By -</p>
                     <div>
-                        <p className='font-semibold mt-2'>Course(s)</p>
+                        <p className='font-semibold mt-2'>Title</p>
                         <div className="w-full">
                             <input
                                 className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                 type="text"
                                 placeholder="Search"
+                                value={course}
+                                onChange={e=>setCourse(e.target.value)}
                             />
                         </div>
                     </div>
@@ -49,6 +54,8 @@ const Books = () => {
                                 className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                 type="text"
                                 placeholder="Search"
+                                value={author}
+                                onChange={e=>setAuthor(e.target.value)}
                             />
                         </div>
                     </div>
@@ -66,7 +73,9 @@ const Books = () => {
                 ) : (
                     // Render your book components once data is fetched
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {books.map((book, index) => (
+                        {books.filter((book)=>{
+                            return (course.toLowerCase()===''?book:book.title.toLowerCase().includes(course) && author.toLowerCase()===''?book:book.author.toLowerCase().includes(author))
+                        }).map((book, index) => (
                             <BookComponent
                                 key={index}
                                 cover={book.cover_page}

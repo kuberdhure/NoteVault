@@ -1,13 +1,20 @@
 'use client';
 import React from 'react'
 import reading from '/public/reading.json'
-import Lottie from 'lottie-react'
+import Lottie from 'lottie-react';
 import {useState} from 'react'
 import {useEffect} from "react";
-
+import axios from "axios";
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    const handleLogin = async()=>{
+        const response=await axios.post('http://127.0.0.1:8000/api/login/',{username,password});
+        console.log("Response",response);
+        localStorage.setItem('token',response.data.access);
+        console.log(localStorage.getItem('token'));
+    }
 
     
   return (
@@ -51,7 +58,7 @@ const LoginPage = () => {
                                         </label>
                                         <input
                                             className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
-                                            type="text"
+                                            type="password"
                                             value={password}
                                             id="email"
                                             onChange={(e) => setPassword(e.target.value)}
@@ -61,7 +68,7 @@ const LoginPage = () => {
                                 
                                     <button
                                         type="button"
-                                        // onClick={handleLogin}
+                                        onClick={handleLogin}
                                         className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                                     >
                                         Login

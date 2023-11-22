@@ -8,6 +8,7 @@ import firebase from "firebase/compat/app"
 import "firebase/compat/storage"
 import axios from 'axios'
 const firebaseConfig = {
+    
     apiKey: "AIzaSyBh-8G4kOXSBYzcoHzjC_R0QZo8frsZnPY",
     authDomain: "notevault-5684a.firebaseapp.com",
     projectId: "notevault-5684a",
@@ -22,8 +23,22 @@ firebase.initializeApp(firebaseConfig);
 
 const Upload = () => {
 
+    useEffect(()=>{
+        const fetchData=async()=>{
+            try{
+                const response=await axios.get('http://localhost:8000/api/upload/');
+                
+                 console.log("Response",response);
+                 setCourses(response.data.courses);
+            }catch(e){
+                console.log(e)
+            }
+        }
+        fetchData();
+        
+    },[])
     // list of options for rendering different options
-    const courses = ["Operating System", "Computer Networks", "Design & Analysis of Algorithms", "Theory of Computation","DSA"]
+    const [courses,setCourses] = useState([])
     const material = ["Reference Book", "Question Paper", "Notes", "Videos"]
     const type = ["End Sem","Mid Sem", "In Sem", "Quiz", "Assignment", "Others"]
 
@@ -120,7 +135,13 @@ const Upload = () => {
                 "category":paperType,
                 "link":videoLink,
             }
-            const response=await axios.post('http://localhost:8000/api/upload/',dataToUpload);
+            const token=localStorage.getItem('token');
+            const response=await axios.post('http://localhost:8000/api/upload/',dataToUpload,
+                {headers:{
+                    'Content-Type': 'application/json',
+                    // 'Authorization': `Bearer ${token}`,
+                }}
+            );
             console.log("res",response);
         }
         catch(e){

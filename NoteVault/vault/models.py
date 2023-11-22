@@ -26,20 +26,26 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'username'
     objects = UserManager()
 
+    def __str__(self):
+        return self.username
+
 class Notes(models.Model):
     title = models.CharField(max_length=100)
-    file = models.FileField()
-    is_approved = models.BooleanField(default=False)
+    file = models.CharField(max_length=4096)
+    is_approved = models.CharField(max_length = 5, default="false")
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
     approved_by = models.CharField(max_length=100)
     course = models.ForeignKey('Course', on_delete=models.CASCADE)
     # count = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.title
+
 class Book(models.Model):
     title = models.CharField(max_length=100)
     file = models.CharField(max_length=1024)
-    is_approved = models.BooleanField(default=False)
+    is_approved = models.CharField(max_length = 5, default="false")
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
     approved_by = models.CharField(max_length=100)
@@ -48,6 +54,9 @@ class Book(models.Model):
     edition = models.CharField(max_length=100)
     cover_page = models.CharField(max_length=1024)
     count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.title
 
 class Paper(models.Model):
     CATEGORY_CHOICES = [
@@ -59,28 +68,37 @@ class Paper(models.Model):
         ('Others', 'Others')
     ]
     title = models.CharField(max_length=100)
-    file = models.FileField()
-    is_approved = models.BooleanField(default=False)
+    file = models.CharField(max_length=4096)
+    is_approved = models.CharField(max_length = 5, default="false")
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
     approved_by = models.CharField(max_length=100)
     course = models.ForeignKey('Course', on_delete=models.CASCADE)
-    year = models.DateField()
+    year = models.IntegerField()
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
+
+    def __str__(self):
+        return self.title
 
 class Video(models.Model):
     title = models.CharField(max_length=100)
     link = models.CharField(max_length=200)
-    is_approved = models.BooleanField(default=False)
+    is_approved = models.CharField(max_length = 5, default="false")
     approved_on = models.DateField(auto_now_add=True)
     uploaded_by = models.CharField(max_length=100)
     approved_by = models.CharField(max_length=100)
     course = models.ForeignKey('Course', on_delete=models.CASCADE)
     # count = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.title
+
 class Course(models.Model):
     title = models.CharField(max_length=100)
     course_code = models.CharField(max_length=100)
     course_credits = models.IntegerField()
     count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.course_code
     
