@@ -26,7 +26,15 @@ const Upload = () => {
     useEffect(()=>{
         const fetchData=async()=>{
             try{
-                const response=await axios.get('http://localhost:8000/api/upload/');
+                const response = await axios.get(
+                  "http://localhost:8000/api/upload/",
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                  }
+                );
                 
                  console.log("Response",response);
                  setCourses(response.data.courses);

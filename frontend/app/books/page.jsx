@@ -13,7 +13,15 @@ const Books = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/books/");
+                const response = await axios.get(
+                  "http://localhost:8000/api/books/",
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                  }
+                );
                 console.log("response",response);
                 setBooks(response.data.books);
                 setLoading(false)

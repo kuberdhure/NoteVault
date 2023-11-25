@@ -12,6 +12,7 @@ from django.middleware.csrf import get_token
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import permissions
 
 
 # Create your views here.
@@ -48,7 +49,7 @@ class CSRF(APIView):
         return JsonResponse({'csrftoken': token})  
      
 class LoginView(APIView):
-    
+    permission_classes = (permissions.AllowAny,)
     def post(self, request):
         csrf_token = get_token(request)
         username = request.data.get("username")

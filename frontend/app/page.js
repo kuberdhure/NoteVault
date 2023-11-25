@@ -21,8 +21,23 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const config = {
+        headers : {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json'
+        }
+      };
         try {
-            const response = await axios.get("http://localhost:8000/api/books/");
+            console.log(config)
+            const response = await axios.get(
+              "http://127.0.0.1:8000/api/books/",
+              {
+                headers: {
+                  'Content-Type': "application/json",
+                  'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            );
             setBooks(response.data.books);
             setLoading(false)
         } catch (error) {
