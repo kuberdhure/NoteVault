@@ -73,13 +73,9 @@ const DropdownBox = (props) => {
             <DropdownTrigger>
                 <Button
                     variant="bordered"
-                    className={`capitalize border border-black px-4 rounded-md hover:border-gray-950 shadow-md text-lg w-2/5 mt-${props.mt} mb-${props.mb} bg-white`}
+                    className={`capitalize border border-black px-4 rounded-md hover:border-gray-950 shadow-md text-lg w-2/3 mt-${props.mt} mb-${props.mb} bg-white`}
                 >
                     {selectedValue}
-                    {
-
-
-                    }
 
                 </Button>
             </DropdownTrigger>

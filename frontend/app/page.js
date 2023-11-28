@@ -18,6 +18,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(true)
   const [books,setBooks]=useState([]);
+  const [courses,setCourses]=useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +31,7 @@ export default function Home() {
         try {
             console.log(config)
             const response = await axios.get(
-              "http://127.0.0.1:8000/api/books/",
+              "http://127.0.0.1:8000/api/home/",
               {
                 headers: {
                   'Content-Type': "application/json",
@@ -38,7 +39,20 @@ export default function Home() {
                 },
               }
             );
-            setBooks(response.data.books);
+            // const response1 = await axios.get(
+            //   "http://localhost:8000/api//",
+            //   {
+            //     headers: {
+            //       "Content-Type": "application/json",
+            //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+            //     },
+            //   }
+            // );
+            
+            // console.log("Response1",response1);
+            console.log("response",response);
+            setCourses(response.data.data.courses);
+            setBooks(response.data.data.books);
             setLoading(false)
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -46,6 +60,7 @@ export default function Home() {
         }
     };
     fetchData();
+
 }, []);
 
   return (
@@ -111,11 +126,21 @@ export default function Home() {
         </div>
         <div className="h-1.5 w-40 bg-black"></div>
         <div className="flex flex-row justify-evenly mb-4 mt-2">
+          {/* <Course course_name={"Data Structures"} course_code={"CS201"} />
           <Course course_name={"Data Structures"} course_code={"CS201"} />
           <Course course_name={"Data Structures"} course_code={"CS201"} />
           <Course course_name={"Data Structures"} course_code={"CS201"} />
-          <Course course_name={"Data Structures"} course_code={"CS201"} />
-          <Course course_name={"Data Structures"} course_code={"CS201"} />
+          <Course course_name={"Data Structures"} course_code={"CS201"} /> */}
+          {loading ? (
+                   
+                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh',width:'1/2' }}>
+                      <CircularProgress />
+                  </Box>
+              ) :
+              courses.map((course,index)=>(
+                <Course course_name={course.title} course_code={course.course_code}/>
+              ))
+        }
         </div>
       </div>
       <div className="mt-4">

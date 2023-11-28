@@ -29,4 +29,5 @@ urlpatterns = [
     path('csrf/', CSRF.as_view()),
     path('download/', DownloadView.as_view()),
     path('approve/', ApproveView.as_view()),
+    path('username/', UserView.as_view())
 ]

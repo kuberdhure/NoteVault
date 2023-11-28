@@ -1,6 +1,7 @@
 'use client';
 import React from 'react'
 import reading from '/public/reading.json'
+import { useRouter } from 'next/navigation';
 import Lottie from 'lottie-react';
 import {useState} from 'react'
 import {useEffect} from "react";
@@ -8,12 +9,19 @@ import axios from "axios";
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const router=useRouter();
 
     const handleLogin = async()=>{
         const response=await axios.post('http://127.0.0.1:8000/api/login/',{username,password});
         console.log("Response",response);
         localStorage.setItem('token',response.data.access);
         console.log(localStorage.getItem('token'));
+        localStorage.setItem("status",false);
+        if(response.status===200){
+            localStorage.setItem("status",true);
+            router.push('/');
+        }
+
     }
 
     

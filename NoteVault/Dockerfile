@@ -1,24 +1,22 @@
-# syntax=docker/dockerfile:1.4
+# Use the Python base image
+FROM python:3.9
 
-FROM --platform=$BUILDPLATFORM python:3.7-alpine AS builder
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file and install dependencies
+COPY ./requirements.txt /app/requirements.txt
+RUN pip install -r requirements.txt
+
+# Copy the Django project into the container
+COPY . /app/
+
+# Expose the port where Django runs (default is 8000)
 EXPOSE 8000
-WORKDIR /NoteVault
-COPY requirements.txt /NoteVault
-RUN pip3 install -r requirements.txt --no-cache-dir
-COPY . /NoteVault
-ENTRYPOINT ["python3"] 
-CMD ["manage.py", "runserver", "0.0.0.0:8000"]
 
-FROM builder as dev-envs
-RUN <<EOF
-apk update
-apk add git
-EOF
-
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
-CMD ["manage.py", "runserver", "0.0.0.0:8000"]
+# Define the command to start the Django server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

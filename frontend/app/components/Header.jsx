@@ -1,7 +1,32 @@
 'use client'
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import axios from "axios";
 const Header = () => {
+    const [username,setUsername]=useState();
+    const [loading,setLoading]=useState(true);
+    useEffect(()=>{
+    const fetchData=async()=>{
+      try{
+          const response = await axios.get(
+            "http://localhost:8000/api/username/",
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+           console.log("Response",response);
+           setUsername(response.data.username);
+           setLoading(false);
+      }catch(e){
+          console.log(e)
+      }
+  }
+  fetchData();
+  },[])
     return (
         <div className="sticky top-0 z-30 w-full bg-white">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
@@ -35,10 +60,26 @@ const Header = () => {
                         </li>
                         <li>
                             <a
-                                href="/contact-us"
+                                href="/books"
                                 className="inline-flex items-center text-sm font-semibold text-gray-800 hover:text-gray-900"
                             >
-                                Contact
+                                Books
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="/courses"
+                                className="inline-flex items-center text-sm font-semibold text-gray-800 hover:text-gray-900"
+                            >
+                                Courses
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="/upload-resource"
+                                className="inline-flex items-center text-sm font-semibold text-gray-800 hover:text-gray-900"
+                            >
+                                Upload Resource
                                 <span>
                                 </span>
                             </a>
@@ -62,11 +103,12 @@ const Header = () => {
                     <span className="relative inline-block">
                         <img
                             className="h-10 w-10 rounded-full"
-                            src="/Profile.svg"
+                            src="/person-circle.svg"
                             alt="Dan_Abromov"
                         />
                         <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-600 ring-2 ring-white"></span>
                     </span>
+                    <div className="mt-2 ml-1">{loading?username:<>...</>}</div>
                 </div>
                 
             </div>

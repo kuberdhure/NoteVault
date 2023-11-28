@@ -11,22 +11,58 @@ from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import permissions
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework import permissions, status
+from rest_framework.decorators import api_view, permission_classes
 
 
 # Create your views here.
+class UserView(APIView):
+
+    def get(self, request):
+        # Assuming the token is present in the Authorization header
+        auth_header = request.headers.get('Authorization', '').split()
+
+        if len(auth_header) != 2 or auth_header[0].lower() != 'bearer':
+            return Response({'error': 'Invalid Authorization header'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        token = auth_header[1]
+
+        try:
+            # Decode the token to get the payload
+            decoded_token = AccessToken(token)
+            user = decoded_token.payload.get('user_id')  # Assuming 'user_id' is present in the payload
+
+            # Retrieve the user object from the database using the user ID
+            user_obj = CustomUser.objects.get(id=user)
+            
+            # Now you can access the user's username and other details
+            username = user_obj.username
+
+            return Response({'username': username}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class Home(APIView):
     
     def get(self, request):
         user = request.user
         print(user)
-        books = Book.objects.all().order_by('-count')[:7]
+        books = Book.objects.filter(is_approved="true").order_by('-count')[:7]
+        books_arr = []
+        for book in books:
+            b = model_to_dict(book)
+            b['course'] = book.course.title
+            books_arr.append(b)
         courses = Course.objects.all().order_by('-count')[:7]
+        courses_arr = []
+        for course in courses:
+            courses_arr.append(model_to_dict(course))
         data = {
-            "books": books,
-            "courses": courses
+            "username": user.username,
+            "books": books_arr,
+            "courses": courses_arr
         }
         return Response({"data" : data, "message": " Got some data"})
         # return Response({"data" : "hello", "message": " Got some data"})
@@ -59,6 +95,7 @@ class LoginView(APIView):
         print(user)
         if user is not None:
             print(user)
+            login(request, user)
             refresh = RefreshToken.for_user(user)
             return Response({
                 'refresh': str(refresh),
@@ -70,7 +107,7 @@ class LoginView(APIView):
 class BookView(APIView):
     
     def get(self, request):
-        books = Book.objects.all()
+        books = Book.objects.filter(is_approved="true")
         courses = Course.objects.all()
         authors=[]
         new_books=[]
@@ -79,6 +116,7 @@ class BookView(APIView):
                 authors.append(book.author)
             new_books.append(model_to_dict(book))
         return Response({"books" : new_books, "authors" : authors, "message": " Got some data"})
+    
 class PaperView(APIView):
     
     def get(self, request):
