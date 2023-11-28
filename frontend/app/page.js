@@ -147,19 +147,17 @@ export default function Home() {
         <p className="flex justify-center items-center text-2xl font-bold ">
           Browse By
         </p>
-        <div className="flex flex-row justify-evenly mb-4 mt-4 flex-wrap">
+        <div className=" mb-4 mt-4 flex-wrap grid grid-cols-3 gap-1 place-items-center">
           <Link href='/courses'><Browse browse_image={"/course.png"} browse_name={"Course"} /></Link>
           <Link href='/books'><Browse browse_image={"/book.png"} browse_name={"Books"} /></Link>
           <Link href='/papers'><Browse browse_image={"/paper.png"} browse_name={"Papers"}/></Link>
+          </div>
+          <div className=" mb-4 mt-4 flex-wrap grid grid-cols-2 gap-1 place-items-center">
           <Link href='/notes'><Browse browse_image={"/Notes.png"} browse_name={"Notes"}/></Link>
-          <Browse
-            browse_image={"/University.png"}
-            browse_name={"Universities"}
-            browse_url={'/university'}
-          />
           <Browse browse_image={"/video.png"} browse_name={"Videos"} />
+          </div>
+          
         </div>
       </div>
-    </div>
   );
 }

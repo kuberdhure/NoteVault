@@ -7,14 +7,24 @@ import axios from "axios";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { useEffect } from "react";
+import Lottie from 'lottie-react';
+import PageNotFound from '/public/PageNotFound.json'
+
 
 
 const PendingApprovals = () => {
+
   const [papers, setPapers] = useState([]);
   const [notes, setNotes] = useState([]);
   const [books, setBooks] = useState([]);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const userType = localStorage.getItem("UserType");
+
+  
+  console.log("UserType", userType)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,6 +46,7 @@ const PendingApprovals = () => {
   
 
   return (
+    userType == 'Student' ? <div className="flex items-center justify-center h-1/2 w-1/2 ml-96"><Lottie animationData={PageNotFound} height={25} width={25}/></div>  :
     <div>
       {/* <Header /> */}
       <h1 className="text-2xl font-semibold mb-2 ml-5 mt-2">

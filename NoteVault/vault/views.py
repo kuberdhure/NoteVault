@@ -38,8 +38,8 @@ class UserView(APIView):
             
             # Now you can access the user's username and other details
             username = user_obj.username
-
-            return Response({'username': username}, status=status.HTTP_200_OK)
+            type = user_obj.type
+            return Response({'username': username, 'type':type}, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -120,7 +120,7 @@ class BookView(APIView):
 class PaperView(APIView):
     
     def get(self, request):
-        papers = Paper.objects.all()
+        papers = Paper.objects.filter(is_approved="true")
         courses = Course.objects.all()
         year = []
         for paper in papers:
@@ -165,7 +165,7 @@ class CourseView(APIView):
 class NotesView(APIView):
     
     def get(self, request):
-        notes = Notes.objects.all()
+        notes = Notes.objects.filter(is_approved="true")
         courses = Course.objects.all()
         return Response({"notes" : notes, "courses" : courses, "message": " Got some data"})
 
@@ -281,28 +281,28 @@ class ApproveView(APIView):
                 notes.delete()
             return Response({"message": "Rejected Successfully!"})
         
-class DownloadView(APIView):
+# class DownloadView(APIView):
     
-    def get(self, request):
-        material_type = request.data.get("material_type")
-        if material_type == "books":
-            book = Book.objects.get(id=request.data.get("id"))
-            book.count += 1
-            book.save()
-            return FileResponse(book.file, as_attachment=True)
-        elif material_type == "papers":
-            paper = Paper.objects.get(id=request.data.get("id"))
-            paper.count += 1
-            paper.save()
-            return FileResponse(paper.file, as_attachment=True)
-        elif material_type == "videos":
-            video = Video.objects.get(id=request.data.get("id"))
-            video.count += 1
-            video.save()
-            return FileResponse(video.file, as_attachment=True)
-        elif material_type == "notes":
-            notes = Notes.objects.get(id=request.data.get("id"))
-            notes.count += 1
-            notes.save()
-            return FileResponse(notes.file, as_attachment=True)
-        return Response({"message": " Downloaded Successfully!"})
+#     def get(self, request):
+#         material_type = request.data.get("material_type")
+#         if material_type == "books":
+#             book = Book.objects.get(id=request.data.get("id"))
+#             book.count += 1
+#             book.save()
+#             return FileResponse(book.file, as_attachment=True)
+#         elif material_type == "papers":
+#             paper = Paper.objects.get(id=request.data.get("id"))
+#             paper.count += 1
+#             paper.save()
+#             return FileResponse(paper.file, as_attachment=True)
+#         elif material_type == "videos":
+#             video = Video.objects.get(id=request.data.get("id"))
+#             video.count += 1
+#             video.save()
+#             return FileResponse(video.file, as_attachment=True)
+#         elif material_type == "notes":
+#             notes = Notes.objects.get(id=request.data.get("id"))
+#             notes.count += 1
+#             notes.save()
+#             return FileResponse(notes.file, as_attachment=True)
+#         return Response({"message": " Downloaded Successfully!"})

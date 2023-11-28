@@ -27,7 +27,7 @@ urlpatterns = [
     path('notes/', NotesView.as_view()),
     path('upload/', UploadView.as_view()),
     path('csrf/', CSRF.as_view()),
-    path('download/', DownloadView.as_view()),
+    # path('download/', DownloadView.as_view()),
     path('approve/', ApproveView.as_view()),
     path('username/', UserView.as_view())
 ]
