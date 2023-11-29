@@ -11,6 +11,8 @@ import {useState,useEffect} from 'react';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress'
 import axios from "axios";
+import Lottie from 'lottie-react';
+import PageNotFound from '/public/PageNotFound.json'
 
 
 
@@ -63,7 +65,9 @@ export default function Home() {
 
 }, []);
 
-  return (
+const user = localStorage.getItem("UserType");
+
+  return user == "Student" || user == "Teacher" ? (
     <div>
       <div className="ml-5 mt-4">
         <div className="flex flex-row justify-between">
@@ -73,40 +77,42 @@ export default function Home() {
               <p className="text-right">Explore</p>
             </Link>
             <Link href={"/books"}>
-              <Image
-                src={"/right.svg"}
-                alt={"Arrow"}
-                height={25}
-                width={25}
-              />
+              <Image src={"/right.svg"} alt={"Arrow"} height={25} width={25} />
             </Link>
           </div>
         </div>
         <div className="h-1.5 w-40 bg-black"></div>
       </div>
-    
+
       {loading ? (
-                   
-                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh',width:'1/2' }}>
-                      <CircularProgress />
-                  </Box>
-              ) : (
-                  // Render your book components once data is fetched
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3">
-                  {books.map((book, index) => (
-                          <BookComponent
-                              key={index}
-                              cover={book.cover_page}
-                              title={book.title}
-                              author={book.author}
-                              file={book.file}
-                              domain={book.domain}
-                              imgAlt="Book"
-                          />
-                      ))}
-                  </div>
-              )}
-             
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+            width: "1/2",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        // Render your book components once data is fetched
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3">
+          {books.map((book, index) => (
+            <BookComponent
+              key={index}
+              cover={book.cover_page}
+              title={book.title}
+              author={book.author}
+              file={book.file}
+              domain={book.domain}
+              imgAlt="Book"
+            />
+          ))}
+        </div>
+      )}
+
       <div className="mt-4 ml-5 mb-4 p-1">
         <div className="flex flex-row justify-between">
           <h2 className="font-bold text-2xl">Courses</h2>
@@ -115,12 +121,7 @@ export default function Home() {
               <p className="text-right">Explore</p>
             </Link>
             <Link href={"/courses"}>
-              <Image
-                src="/right.svg"
-                alt={"Arrow"}
-                height={25}
-                width={25}
-              />
+              <Image src="/right.svg" alt={"Arrow"} height={25} width={25} />
             </Link>
           </div>
         </div>
@@ -132,15 +133,25 @@ export default function Home() {
           <Course course_name={"Data Structures"} course_code={"CS201"} />
           <Course course_name={"Data Structures"} course_code={"CS201"} /> */}
           {loading ? (
-                   
-                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh',width:'1/2' }}>
-                      <CircularProgress />
-                  </Box>
-              ) :
-              courses.map((course,index)=>(
-                <Course course_name={course.title} course_code={course.course_code}/>
-              ))
-        }
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100vh",
+                width: "1/2",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            courses.map((course, index) => (
+              <Course
+                course_name={course.title}
+                course_code={course.course_code}
+              />
+            ))
+          )}
         </div>
       </div>
       <div className="mt-4">
@@ -148,16 +159,27 @@ export default function Home() {
           Browse By
         </p>
         <div className=" mb-4 mt-4 flex-wrap grid grid-cols-3 gap-1 place-items-center">
-          <Link href='/courses'><Browse browse_image={"/course.png"} browse_name={"Course"} /></Link>
-          <Link href='/books'><Browse browse_image={"/book.png"} browse_name={"Books"} /></Link>
-          <Link href='/papers'><Browse browse_image={"/paper.png"} browse_name={"Papers"}/></Link>
-          </div>
-          <div className=" mb-4 mt-4 flex-wrap grid grid-cols-2 gap-1 place-items-center">
-          <Link href='/notes'><Browse browse_image={"/Notes.png"} browse_name={"Notes"}/></Link>
+          <Link href="/courses">
+            <Browse browse_image={"/course.png"} browse_name={"Course"} />
+          </Link>
+          <Link href="/books">
+            <Browse browse_image={"/book.png"} browse_name={"Books"} />
+          </Link>
+          <Link href="/papers">
+            <Browse browse_image={"/paper.png"} browse_name={"Papers"} />
+          </Link>
+        </div>
+        <div className=" mb-4 mt-4 flex-wrap grid grid-cols-2 gap-1 place-items-center">
+          <Link href="/notes">
+            <Browse browse_image={"/Notes.png"} browse_name={"Notes"} />
+          </Link>
           <Browse browse_image={"/video.png"} browse_name={"Videos"} />
-          </div>
-          
         </div>
       </div>
+    </div>
+  ) : (
+    <div className="flex items-center justify-center h-1/2 w-1/2 ml-96">
+      <Lottie animationData={PageNotFound} height={25} width={25} />
+    </div>
   );
 }
