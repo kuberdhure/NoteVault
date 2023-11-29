@@ -46,7 +46,7 @@ const PendingApprovals = () => {
   
 
   return (
-    userType == 'Student' ? <div className="flex items-center justify-center h-1/2 w-1/2 ml-96"><Lottie animationData={PageNotFound} height={25} width={25}/></div>  :
+    userType == 'Teacher' ? 
     <div>
       {/* <Header /> */}
       <h1 className="text-2xl font-semibold mb-2 ml-5 mt-2">
@@ -110,7 +110,8 @@ const PendingApprovals = () => {
             ))}
         </div>
       )}
-    </div>
+    </div> :
+    <div className="flex items-center justify-center h-1/2 w-1/2 ml-96"><Lottie animationData={PageNotFound} height={25} width={25}/></div> 
   );
 };
 
