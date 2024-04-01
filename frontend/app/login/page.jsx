@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import reading from "/public/reading.json";
-import { useRouter } from "next/navigation";
+import { useRouter , redirect } from "next/navigation";
 import Lottie from "lottie-react";
 import { useState } from "react";
 import authService from "../../appwrite/auth";
@@ -9,49 +9,85 @@ import authService from "../../appwrite/auth";
 
 
 const LoginPage = () => {
+  // const [username, setUsername] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [isUserLoggedIn, setUserLoggedIn] = useState(false);
+  // const router = useRouter();
+  // const [session, setSession] = useState("");
+  // const auth = authService;
+  // const handleLogin = async () => {
+
+  //   setSession(auth.login({ email: username, password: password }))
+
+  //   const promise = auth.getCurrentUser();
+
+  //   promise.then(
+  //     function (response) {
+  //       setUserLoggedIn((prev) => !prev)
+  //       console.log("User", response);
+  //       // Success
+  //     },
+  //     function (error) {
+  //       console.log(error); // Failure
+  //       localStorage.setItem("user_login", false)
+  //     }
+  //   );
+
+  //   isUserLoggedIn ? (login.then(
+  //     (response) => {
+  //       console.log("success", response);
+  //       localStorage.setItem("user_login", true)
+  //       // setLoggedIn((prev)=>!prev);
+  //       router.push('/')
+  //     },
+  //     (error) => {
+  //       console.log("err", error);
+  //       localStorage.setItem("user_login", false)
+  //     }
+  //   )) : (alert("user already logged in!"), router.push("/"))
+
+
+  // };
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isUserLoggedIn, setUserLoggedIn] = useState(false);
   const router = useRouter();
+  const auth = authService;
 
   const handleLogin = async () => {
-    // const response=await axios.post('http://127.0.0.1:8000/api/login/',{username,password});
-    // console.log("Response",response);
-    // localStorage.setItem('token',response.data.access);
-    // console.log(localStorage.getItem('token'));
-    // localStorage.setItem("status",false);
-    // if(response.status===200){
-    //     localStorage.setItem("status",true);
-    //     router.push('/');
-    // }
-    const auth = authService;
-
-    const login = auth.login({ email: username, password: password });
-
-    login.then(
-      (response) => {
-        console.log("success", response);
-        localStorage.setItem("user_login",true)
-        // setLoggedIn((prev)=>!prev);
-        router.push('/')
-      },
-      (error) => {
-        console.log("err", error);
-        localStorage.setItem("user_login",false)
-      }
-      );
+    try {
+      // Send login request to Appwrite
+      // const session = await auth.login({ email: username, password: password });
       
-      const promise = auth.getCurrentUser();
-      
-      promise.then(
-        function (response) {
-        console.log("User",response); // Success
-      },
-      function (error) {
-        console.log(error); // Failure
-        localStorage.setItem("user_login",false)
-      }
-    );
+      // If login successful, update state and route to '/'
+      setUserLoggedIn(true);
+      localStorage.setItem("user_login", true);
+      // redirect("https://localhost:3000/")
+      router.back('/')
+    } catch (error) {
+      // If login fails, log error and update state
+      console.log("Error logging in:", error);
+      setUserLoggedIn(false);
+      localStorage.setItem("user_login", false);
+      // Optionally, display an error message to the user
+      alert("Login failed. Please check your credentials and try again.");
+    }
   };
+
+  // Redirect to home if user is already logged in
+  
+ useEffect(()=>{
+  if (isUserLoggedIn) {
+    router.push('/');
+    
+    // redirect('/')
+
+    return null;
+  }
+ },[])
+  
+
 
   return (
     <div>
@@ -103,7 +139,7 @@ const LoginPage = () => {
 
                   <button
                     type="button"
-                    onClick={handleLogin}
+                    onClick={() => handleLogin()}
                     className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                   >
                     Login
