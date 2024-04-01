@@ -6,31 +6,31 @@ import axios from "axios";
 const Header = () => {
   const [username, setUsername] = useState();
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8000/api/username/",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        console.log("Response", response);
-        setUsername(response.data.username);
-        localStorage.setItem("UserType",response.data.type);
-        setLoading(false);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // const response = await axios.get(
+  //       //   "http://localhost:8000/api/username/",
+  //       //   {
+  //       //     headers: {
+  //       //       "Content-Type": "application/json",
+  //       //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       //     },
+  //       //   }
+  //       // );
+  //       // console.log("Response", response);
+  //       // setUsername(response.data.username);
+  //       // localStorage.setItem("UserType",response.data.type);
+  //       // setLoading(false);
 
-        console.log("Username", response.data.username);
-        console.log("type", response.data.type);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fetchData();
-  }, []);
+  //       // console.log("Username", response.data.username);
+  //       // console.log("type", response.data.type);
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
   return (
     <div className="sticky top-0 z-30 w-full bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
@@ -110,11 +110,14 @@ const Header = () => {
             className="mr-14"
           />
           <span className="relative inline-block">
+          <Link href={"/login"}>
             <img
               className="h-10 w-10 rounded-full"
               src="/person-circle.svg"
               alt="Dan_Abromov"
+          
             />
+           </Link> 
             <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-600 ring-2 ring-white"></span>
           </span>
           <div className="mt-2 ml-1">{loading ? username : <>...</>}</div>
