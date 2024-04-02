@@ -1,15 +1,14 @@
 "use client";
 import React, { useEffect } from "react";
 import reading from "/public/reading.json";
-import { useRouter , redirect } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 import Lottie from "lottie-react";
 import { useState } from "react";
 import authService from "../../appwrite/auth";
-// import {setLoggedIn} from './page'
 
 
 const LoginPage = () => {
-  // const [username, setUsername] = useState("");
+
   // const [password, setPassword] = useState("");
   // const [isUserLoggedIn, setUserLoggedIn] = useState(false);
   // const router = useRouter();
@@ -46,7 +45,6 @@ const LoginPage = () => {
   //     }
   //   )) : (alert("user already logged in!"), router.push("/"))
 
-
   // };
 
   const [username, setUsername] = useState("");
@@ -59,12 +57,25 @@ const LoginPage = () => {
     try {
       // Send login request to Appwrite
       // const session = await auth.login({ email: username, password: password });
-      
+
       // If login successful, update state and route to '/'
       setUserLoggedIn(true);
       localStorage.setItem("user_login", true);
+
+      const promise = authService.account.createJWT();
+
+      promise.then(
+        function (response) {
+          sessionStorage.setItem("JWT_Token","")
+          sessionStorage.setItem("JWT_Token",response.jwt)
+          console.log("JWT",response); // Success
+        },
+        function (error) {
+          console.log(error); // Failure
+        }
+      );
       // redirect("https://localhost:3000/")
-      router.back('/')
+      router.push("/");
     } catch (error) {
       // If login fails, log error and update state
       console.log("Error logging in:", error);
@@ -76,18 +87,16 @@ const LoginPage = () => {
   };
 
   // Redirect to home if user is already logged in
-  
- useEffect(()=>{
-  if (isUserLoggedIn) {
-    router.push('/');
-    
-    // redirect('/')
 
-    return null;
-  }
- },[])
-  
+  useEffect(() => {
+    if (isUserLoggedIn) {
+      router.push("/");
 
+      // redirect('/')
+
+      return null;
+    }
+  }, []);
 
   return (
     <div>

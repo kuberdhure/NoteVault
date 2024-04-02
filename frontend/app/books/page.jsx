@@ -5,16 +5,15 @@ import { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { Client, Databases } from "appwrite";
-import conf from "../../conf/conf";
+import config from "../../conf/conf";
+import service from "../../appwrite/config";
 
 const client = new Client();
-
 const databases = new Databases(client);
 
 client
-  .setEndpoint("https://cloud.appwrite.io/v1") // Your API Endpoint
-  .setProject("660579aadb0cea1edae6");
-//.setKey('11268e2e06d71dbcd26848990eebe4e9f8a7ff75ce2422fc2479c9b31d766574e270de120e5dbaa7dd3a91883b701fe399f8210fc0b1cba9cc4dc50de06b1c0ad4f4ec9a6bfb4a8c3c196895a642e05bcf2c04ac11df247b7a1b37bd89bcf29d82f9d921239d891aa0d71fe9cff0bd682eea8403a11fd16ec6a40b68b9ca0c33') // Your project ID
+  .setEndpoint(config.appwriteUrl) // Your API Endpoint
+  .setProject(config.projectID);
 
 const Books = () => {
   const [course, setCourse] = useState("");
@@ -23,24 +22,16 @@ const Books = () => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
-      //    (do not delete)
-       try {
-              const response = await databases
-              //.getDocument('66057b599a5c78172b83', '66057e0e7fdcee12261d', '66057f376cf7617c652f');
-
-      //         console.log("here!!")
-      //         console.log("response",response);
-      //         // setBooks(response.data.books);
-      //         setLoading(false)
-      //     } catch (error) {
-      //         console.error("Error fetching data:", error);
-      //         setLoading(false)
-      //     }
-        fetchData();
-       }catch(err){
-         console.log("Somethin went wrong",err)
-       }
-    }
+      try {
+        const data = await service.getAllDocs('Books')
+        setBooks(data.documents);
+        setLoading(false);
+        console.log("response", data);
+      } catch (err) {
+        console.log("Somethin went wrong", err);
+      }
+    };
+    fetchData();
   }, []);
 
   const handleSubmit = async () => {
@@ -104,9 +95,9 @@ const Books = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {books
               .filter((book) => {
-                return course.toLowerCase() === ""
+                return book.course.Title.toLowerCase() === ""
                   ? book
-                  : book.title.toLowerCase().includes(course) &&
+                  : book.title.toLowerCase().includes(course) ||
                     author.toLowerCase() === ""
                   ? book
                   : book.author.toLowerCase().includes(author);
