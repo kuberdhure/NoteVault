@@ -10,6 +10,11 @@ const collectionIdMap = {
     "Videos": "videosCollectionID"
   };
 
+  const bucketIdMap = {
+    "Image":"imageBucketID",
+    "Docs":"docsBucketID"
+  }
+
 export class Service {
   client = new Client();
   databases;
@@ -25,6 +30,15 @@ export class Service {
     return collectionId;
   }
 
+  mapBucketID(bucketName){
+    let bucketId =  "";
+    if (bucketIdMap.hasOwnProperty(bucketName)) {
+        // Fetch the bucket ID from the config object using the mapping
+        bucketId = config[bucketIdMap[bucketName]];
+    }
+    return bucketId;
+  }
+
   constructor() {
     this.client
       .setEndpoint(config.appwriteUrl)
@@ -33,7 +47,8 @@ export class Service {
     this.bucket = new Storage(this.client);
   }
 
-  async uploadData(
+  //uploads data to appwrite
+async uploadData(
     { collectionName, title, docID, coverImage, status },
     extras
   ) {
@@ -56,8 +71,8 @@ export class Service {
               file: extras.file,
               is_approved: status,
               approved_on: null,
-              author: null,
-              edition: null,
+              author:  extras.author?extras.author:null,
+              edition: extras.edition?extras.edition:null,
               cover_page: coverImage,
               course: extras.course,
             };
@@ -78,7 +93,7 @@ export class Service {
 
     try {
       return await this.databases.createDocument(
-        config.appwriteDatabaseId,
+        config.databaseID,
         collectionId,
         docID,
         data
@@ -119,7 +134,8 @@ export class Service {
       return false;
     }
   }
-
+ 
+  //get document data from appwrite
   async getData(docID,collectionName) {
     const collectionId = this.mapCollectionName(collectionName);
     try {
@@ -134,7 +150,8 @@ export class Service {
     }
   }
 
-  async getAllDocs(collectionName,queries) {
+  //Lists all the documents in a collection
+ async getAllDocs(collectionName,queries) {
     const collectionId = this.mapCollectionName(collectionName);
 
     try {
@@ -150,11 +167,11 @@ export class Service {
   }
 
   // file upload service
-
-  async uploadFile(file) {
+  async uploadFile(bucketName,file) {
+    let bucketID = this.mapBucketID(bucketName);
     try {
       return await this.bucket.createFile(
-        config.appwriteBucketId,
+        bucketID,
         ID.unique(),
         file
       );
@@ -175,7 +192,11 @@ export class Service {
   }
 
   getFilePreview(fileId) {
-    return this.bucket.getFilePreview(config.appwriteBucketId, fileId);
+    return this.bucket.getFilePreview(config.docsBucketID, fileId);
+  }
+
+  getImagePreview(fileId) {
+    return this.bucket.getFilePreview(config.imageBucketID, fileId);
   }
 }
 

@@ -109,7 +109,6 @@ const Books = () => {
                   title={book.title}
                   author={book.author}
                   file={book.file}
-                  domain={book.domain}
                   imgAlt="Book"
                 />
               ))}

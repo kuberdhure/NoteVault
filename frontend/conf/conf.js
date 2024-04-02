@@ -9,6 +9,8 @@ const config = {
   papersCollectionID: process.env.NEXT_PUBLIC_APPWRITE_PAPERS_COLLECTION_ID,
   usersCollectionID: process.env.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION_ID,
   videosCollectionID: process.env.NEXT_PUBLIC_APPWRITE_VIDEOS_COLLECTION_ID,
+  imageBucketID: process.env.NEXT_PUBLIC_APPWRITE_IMAGE_BUCKET_ID,
+  docsBucketID: process.env.NEXT_PUBLIC_APPWRITE_DOCS_BUCKET_ID,
 };
 
 export default config;

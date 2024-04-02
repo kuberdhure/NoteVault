@@ -1,12 +1,10 @@
 import React from "react";
 import Link from "next/link";
 
-import { useEffect } from "react";
+
 
 function BookComponent(props) {
-  useEffect(() => {
-    console.log("coverUrl", props.cover);
-  }, []);
+  
   return (
     <div className="w-60 rounded-2xl shadow flex flex-col m-2 bg-white h-fit p-2 border border-gray-900 transition-transform transition-delay-500 ease hover:shadow-lg hover:bg-[#1c4386] hover:w-70 hover:h-35 transform hover:scale-105 group hover:text-white ">
       <div>

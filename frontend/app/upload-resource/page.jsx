@@ -3,43 +3,50 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import DropdownBox from "../components/DropdownBox";
 import { useRouter } from "next/navigation";
+import service from "@/appwrite/config";
+import config from "../../conf/conf"
 import Image from "next/image";
 import FileContainer from "../components/FileContainer";
-import firebase from "firebase/compat/app";
-import "firebase/compat/storage";
-import axios from "axios";
-const firebaseConfig = {
-  apiKey: "AIzaSyBh-8G4kOXSBYzcoHzjC_R0QZo8frsZnPY",
-  authDomain: "notevault-5684a.firebaseapp.com",
-  projectId: "notevault-5684a",
-  storageBucket: "notevault-5684a.appspot.com",
-  messagingSenderId: "118095513364",
-  appId: "1:118095513364:web:07f431474bdc7c100da401",
-  measurementId: "G-TNBL9KNV7J",
-};
 
-firebase.initializeApp(firebaseConfig);
+import axios from "axios";
+// const firebaseConfig = {
+//   apiKey: "AIzaSyBh-8G4kOXSBYzcoHzjC_R0QZo8frsZnPY",
+//   authDomain: "notevault-5684a.firebaseapp.com",
+//   projectId: "notevault-5684a",
+//   storageBucket: "notevault-5684a.appspot.com",
+//   messagingSenderId: "118095513364",
+//   appId: "1:118095513364:web:07f431474bdc7c100da401",
+//   measurementId: "G-TNBL9KNV7J",
+// };
+
+//firebase.initializeApp(firebaseConfig);
 
 const Upload = () => {
-  const router=useRouter();
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/upload/", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        console.log("Response", response);
-        setCourses(response.data.courses);
-      } 
-      catch (e) {
-        console.log(e);
-      }
-    };
-    fetchData();
-  }, []);
+  const router = useRouter();
+
+  //TODO: use useEffect to fetch courses
+
+
+  //useEffect(() => {
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:8000/api/upload/", {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       },
+  //     });
+  //     console.log("Response", response);
+  //     setCourses(response.data.courses);
+
+  //}
+  //    catch (e) {
+  //      console.log(e);
+  //    }
+  //  };
+  //  fetchData();
+  //}, []);
+
   // list of options for rendering different options
   const [courses, setCourses] = useState([]);
   const material = ["Reference Book", "Question Paper", "Notes", "Videos"];
@@ -80,70 +87,98 @@ const Upload = () => {
   const [fileURL, setFileURL] = useState("");
   const [coverPageURL, setCoverPageURL] = useState("");
 
-  const handleFileUpload = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const storageRef = firebase.storage().ref();
-      const fileRef = storageRef.child(selectedFile.name);
+  const [isUploadInProgress, setIsUploadInProgress] = useState(false);
+  const [isImgFilesUploaded, setIsImgFilesUploaded] = useState(false);
+  const [isDocFilesUploaded, setIsDocFilesUploaded] = useState(false);
+  const [imgfileID, setImgFileID] = useState("");
+  const [docfileID, setDocFileID] = useState("");
 
-      fileRef.put(selectedFile).then((snapshot) => {
-        snapshot.ref.getDownloadURL().then((downloadURL) => {
-          console.log(downloadURL);
-          setFileURL(downloadURL);
-        });
-      });
+  const fileHandler = service;
+
+
+  useEffect(()=>{
+    const fetchData = async () => {
+      const courseData = await fileHandler.getAllDocs("Course");
+      console.log(courseData)
+      const courseArr = courseData.documents.map(course => course.Title) 
+      setCourses(courseArr);
+    }
+    fetchData();
+  }
+,[])
+
+  const handleFileUpload = async (event) => {
+    const selectedFile = event.target.files[0];
+
+    if (selectedFile) {
+      try {
+        setIsUploadInProgress(true);
+        const response = await fileHandler.uploadFile("Docs", selectedFile);
+        setDocFileID(response.$id);
+        console.log("Doc File upload response", response);
+        setIsDocFilesUploaded(true);
+      } catch (error) {
+        console.log("Error occurred while uploading file", error);
+      } finally {
+        setIsUploadInProgress(false);
+      }
     } else {
-      console.log("No file selected");
+      alert("No file selected");
     }
   };
 
-  const handleCoverPageUpload = (event) => {
+  const handleCoverPageUpload = async (event) => {
     const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const storageRef = firebase.storage().ref();
-      const fileRef = storageRef.child(selectedFile.name);
 
-      fileRef.put(selectedFile).then((snapshot) => {
-        snapshot.ref.getDownloadURL().then((downloadURL) => {
-          console.log(downloadURL);
-          setFileURL(downloadURL);
-          setCoverPageURL(downloadURL);
-        });
-      });
+    if (selectedFile) {
+      // const storageRef = firebase.storage().ref();
+      // const fileRef = storageRef.child(selectedFile.name);
+
+      // fileRef.put(selectedFile).then((snapshot) => {
+      //   snapshot.ref.getDownloadURL().then((downloadURL) => {
+      //     console.log(downloadURL);
+      //     setFileURL(downloadURL);
+      //     setCoverPageURL(downloadURL);
+      //   });
+      // });
+
+      try {
+        setIsUploadInProgress(true);
+        const response = await fileHandler.uploadFile("Image", selectedFile);
+        setImgFileID(response.$id);
+        console.log("Image File upload response", response);
+        setIsImgFilesUploaded(true);
+      } catch (error) {
+        console.log("Error occurred while uploading file", error);
+      } finally {
+        setIsUploadInProgress(false);
+      }
     } else {
       console.log("No file selected");
     }
   };
 
   const uploadClicked = async () => {
+    
+
     try {
-      const dataToUpload = {
+      const response = fileHandler.uploadData({
+        collectionName: "Books",
         title: resourceTitle,
-        file: fileURL,
-        coverPage: coverPageURL,
-        course: userCourse,
-        material_type: materialType,
-        author: bookAuthorName,
-        edition: bookEdition,
-        year: paperYear,
-        category: paperType,
-        link: videoLink,
-      };
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:8000/api/upload/",
-        dataToUpload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            // 'Authorization': `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("res", response);
-    } catch (e) {
-      console.log(e);
+        docID: docfileID,
+        coverImage: `https://cloud.appwrite.io/v1/storage/buckets/${config.imageBucketID}/files/${imgfileID}/view?project=${config.projectID}`
+      },{
+        author:bookAuthorName,
+        edition:bookEdition,
+        course:userCourse,
+        file:`https://cloud.appwrite.io/v1/storage/buckets/${config.docsBucketID}/files/${docfileID}/view?project=${config.projectID}`,
+      });
+      console.log("data upload res",response)  
+    } catch (error) {
+      
     }
+
+    console.log("clicked");
   };
 
   return (
@@ -192,7 +227,7 @@ const Upload = () => {
                     type="radio"
                     value="Other"
                     name="paper"
-                    onChange={(e) => setIsSpit(e.targetvalue === "SPIT")}
+                    onChange={(e) => setIsSpit(e.target.value === "SPIT")}
                   />{" "}
                   Other University
                 </div>
@@ -239,7 +274,7 @@ const Upload = () => {
                 className="flex h-10 w-1/2 rounded-md border border-black bg-transparent px-3 py-2 text-sm "
                 type="text"
                 id="author"
-                placeholder="Author Name"
+                placeholder="Author Name q"
                 onChange={(e) => setBookAuthorName(e.target.value)}
               />
 
@@ -271,9 +306,10 @@ const Upload = () => {
           <button
             type="button"
             className="rounded-md w-1/4 mt-5 bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            onClick={uploadClicked}
+            onClick={(e) => uploadClicked(e)}
+            disabled={isUploadInProgress} // Disable button if upload in progress or files not uploaded
           >
-            Upload
+            {isUploadInProgress ? "Uploading..." : "Upload"}
           </button>
         </div>
 
@@ -287,8 +323,8 @@ const Upload = () => {
               <div>Upload Document Here</div>
               <input
                 type="file"
-                className="pl-2 mt-5 justify-center" 
-                onChange={handleFileUpload}
+                className="pl-2 mt-5 justify-center"
+                onChange={(e) => handleFileUpload(e)}
               />
             </div>
 
@@ -297,7 +333,7 @@ const Upload = () => {
               <input
                 type="file"
                 className="pl-2 mt-5 justify-center"
-                onChange={handleCoverPageUpload}
+                onChange={(e) => handleCoverPageUpload(e)}
               />
             </div>
           </div>
