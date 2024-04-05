@@ -7,46 +7,58 @@ import axios from "axios";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { useEffect } from "react";
-import Lottie from 'lottie-react';
-import PageNotFound from '/public/PageNotFound.json'
-
-
+import Lottie from "lottie-react";
+import PageNotFound from "/public/PageNotFound.json";
+import service from "@/appwrite/config";
+import { Query } from "appwrite";
 
 const PendingApprovals = () => {
-
   const [papers, setPapers] = useState([]);
   const [notes, setNotes] = useState([]);
   const [books, setBooks] = useState([]);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const userType = localStorage.getItem("UserType");
+  //   const userType = localStorage.getItem("UserType");
 
-  
-  console.log("UserType", userType)
+  //   console.log("UserType", userType)
+
+  //   // useEffect(() => {
+  //   //   const fetchData = async () => {
+  //   //     try {
+  //   //       const response = await axios.get("http://localhost:8000/api/approve/");
+  //   //       console.log("response", response);
+  //   //       setBooks(response.data.books);
+  //   //       setNotes(response.data.notes);
+  //   //       setPapers(response.data.papers);
+  //   //       setVideos(response.data.videos);
+  //   //       setLoading(false);
+  //   //     } catch (error) {
+  //   //       console.error("Error fetching data:", error);
+  //   //       setLoading(false);
+  //   //     }
+  //   //   };
+  //   //   fetchData();
+  //   // }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/approve/");
-        console.log("response", response);
-        setBooks(response.data.books);
-        setNotes(response.data.notes);
-        setPapers(response.data.papers);
-        setVideos(response.data.videos);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
+    const getData = async () => {
+      const approvalData = await service.getAllDocs("Books", [
+        Query.equal("is_approved", false),
+      ]);
+      console.log(approvalData);
+      setBooks(approvalData.documents);
+      setLoading(false);
     };
-    fetchData();
+    console.log("useeeffect")
+    getData();
   }, []);
 
-  
+  const handleApprovalRejection = (bookId) =>{
+    setBooks(books => books.filter(book => book.$id != bookId));
+  }
 
   return (
-    userType == 'Teacher' ? 
     <div>
       {/* <Header /> */}
       <h1 className="text-2xl font-semibold mb-2 ml-5 mt-2">
@@ -69,13 +81,17 @@ const PendingApprovals = () => {
         // Render your book components once data is fetched
         <div className=" relative items-start flex-col ml-10 mr-10 mt-5">
           {books.map((book, index) => (
+    
             <Request
               key={index}
-              id={book.id}
+              id={book.$id}
               title={book.title}
-              course={book.course}
-              type="Book"
+              course={book.course.Title}
+              type="Books"
               user={book.uploaded_by}
+              docFileID={book.docFileID}
+              imageFileID={book.imageFileID}
+              handler={handleApprovalRejection}
             />
           ))}
           {notes.map((note, index) => (
@@ -88,30 +104,29 @@ const PendingApprovals = () => {
               user={note.uploaded_by}
             />
           ))}
-            {papers.map((paper, index) => (
-                <Request
-                key={index}
-                id={paper.id}
-                title={paper.title}
-                course={paper.course}
-                type="Paper"
-                user={paper.uploaded_by}
-                />
-            ))}
-            {videos.map((video, index) => (
-                <Request
-                key={index}
-                id={video.id}
-                title={video.title}
-                course={video.course}
-                type="Video"
-                user={video.uploaded_by}
-                />
-            ))}
+          {papers.map((paper, index) => (
+            <Request
+              key={index}
+              id={paper.id}
+              title={paper.title}
+              course={paper.course}
+              type="Paper"
+              user={paper.uploaded_by}
+            />
+          ))}
+          {videos.map((video, index) => (
+            <Request
+              key={index}
+              id={video.id}
+              title={video.title}
+              course={video.course}
+              type="Video"
+              user={video.uploaded_by}
+            />
+          ))}
         </div>
       )}
-    </div> :
-    <div className="flex items-center justify-center h-1/2 w-1/2 ml-96"><Lottie animationData={PageNotFound} height={25} width={25}/></div> 
+    </div>
   );
 };
 

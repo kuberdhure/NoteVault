@@ -168,6 +168,8 @@ const Upload = () => {
         docID: docfileID,
         coverImage: `https://cloud.appwrite.io/v1/storage/buckets/${config.imageBucketID}/files/${imgfileID}/view?project=${config.projectID}`
       },{
+        docFileID:docfileID,
+        imageFileID:imgfileID,
         author:bookAuthorName,
         edition:bookEdition,
         course:userCourse,
@@ -220,7 +222,7 @@ const Upload = () => {
                     name="paper"
                     onChange={(e) => setIsSpit(e.target.value === "SPIT")}
                   />{" "}
-                  SPIT
+                  SAKEC
                 </div>
                 <div>
                   <input

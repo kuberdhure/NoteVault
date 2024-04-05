@@ -75,6 +75,8 @@ async uploadData(
               edition: extras.edition?extras.edition:null,
               cover_page: coverImage,
               course: extras.course,
+              imageFileID:extras.imageFileID,
+              docFileID:extras.docFileID
             };
           } else if (collectionName === "Course") {
             collectionId = config.courseCollectionID;
@@ -103,17 +105,16 @@ async uploadData(
     }
   }
 
-  async updatePost(docID, { title, content, featuredImage, status }) {
+  async updateDoc(docID,collectionName, { title , is_approved }) {
+    let collectionID = this.mapCollectionName(collectionName);
+    console.log("from config",collectionName,collectionID)
     try {
       return await this.databases.updateDocument(
-        config.appwriteDatabaseId,
-        config.appwriteCollectionId,
+        config.databaseID,
+        collectionID,
         docID,
         {
-          title,
-          content,
-          featuredImage,
-          status,
+          is_approved,
         }
       );
     } catch (error) {
@@ -121,11 +122,13 @@ async uploadData(
     }
   }
 
-  async deletePost(docID) {
+  async deleteDoc(docID,collectionName) {
+    let collectionID = this.mapCollectionName(collectionName);
+
     try {
       await this.databases.deleteDocument(
-        config.appwriteDatabaseId,
-        config.appwriteCollectionId,
+        config.databaseID,
+        collectionID,
         docID
       );
       return true;
@@ -181,9 +184,11 @@ async uploadData(
     }
   }
 
-  async deleteFile(fileId) {
+  async deleteFile(imageFileId,docFileId) {
+ 
     try {
-      await this.bucket.deleteFile(config.appwriteBucketId, fileId);
+      await this.bucket.deleteFile(config.docsBucketID, imageFileId );
+      await this.bucket.deleteFile(config.imageBucketID, docFileId );
       return true;
     } catch (error) {
       console.log("Appwrite service :: deleteFile :: error", error);
