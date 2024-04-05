@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import { Client, Databases } from "appwrite";
 import config from "../../conf/conf";
 import service from "../../appwrite/config";
+import {Query} from "appwrite"
 
 const client = new Client();
 const databases = new Databases(client);
@@ -23,7 +24,7 @@ const Books = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await service.getAllDocs('Books')
+        const data = await service.getAllDocs('Books',[Query.equal("is_approved",true)])
         setBooks(data.documents);
         setLoading(false);
         console.log("response", data);
@@ -103,6 +104,7 @@ const Books = () => {
                   : book.author.toLowerCase().includes(author);
               })
               .map((book, index) => (
+                book.is_approved ? 
                 <BookComponent
                   key={index}
                   cover={book.cover_page}
@@ -110,7 +112,7 @@ const Books = () => {
                   author={book.author}
                   file={book.file}
                   imgAlt="Book"
-                />
+                /> : null
               ))}
           </div>
         )}

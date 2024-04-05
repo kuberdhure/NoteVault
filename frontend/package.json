@@ -13,7 +13,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.18",
     "@nextui-org/react": "^2.1.13",
-    "appwrite": "^14.0.0",
+    "appwrite": "^13.0.2",
     "autoprefixer": "10.4.15",
     "axios": "^1.6.2",
     "debug": "^4.3.4",
