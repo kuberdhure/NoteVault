@@ -36,7 +36,7 @@ const DropdownBox = (props) => {
             props.setBook(false);
             props.setIsLink(false);
             props.setIsQuestionPaper(true)
-            props.setMaterialType(selectedValue);
+            props.setMaterialType(selectedValue.$id);
 
         }
 
@@ -44,7 +44,7 @@ const DropdownBox = (props) => {
             props.setBook(false);
             props.setIsQuestionPaper(false)
             props.setIsLink(true);
-            props.setMaterialType(selectedValue);
+            props.setMaterialType(selectedValue.$id);
 
         }
 
@@ -52,7 +52,7 @@ const DropdownBox = (props) => {
             props.setIsQuestionPaper(false)
             props.setIsLink(false);
             props.setBook(true);
-            props.setMaterialType(selectedValue);
+            props.setMaterialType(selectedValue.$id);
 
         }
 
@@ -60,7 +60,7 @@ const DropdownBox = (props) => {
             props.setIsQuestionPaper(false)
             props.setIsLink(false);
             props.setBook(false);
-            props.setMaterialType(selectedValue);
+            props.setMaterialType(selectedValue.$id);
 
         }
 

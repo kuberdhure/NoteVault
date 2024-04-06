@@ -1,22 +1,23 @@
 'use client'
 import Link from 'next/link'
 import {useState,useEffect} from 'react';
-import axios from 'axios';
+import service from '@/appwrite/config'
 const Course = () => {
 
     const [data,setData]=useState([]);
     const [loading, setLoading] = useState(true);
+    
     useEffect(()=>{
         const fetchData=async()=>{
             try{
-                const response=await axios.get("http://127.0.0.1:8000/api/courses/")
-                
-                setData(response.data.courses);
+               const response = await service.getAllDocs('Course') 
+                console.log(response.documents)
+                setData(response.documents);
                 setLoading(false);
             }
             catch (error) {
                 console.error("Error fetching data:", error);
-                setLoading(false);
+                alert()
             }
         }
         fetchData()

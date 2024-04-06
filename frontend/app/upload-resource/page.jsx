@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import DropdownBox from "../components/DropdownBox";
 import { useRouter } from "next/navigation";
 import service from "@/appwrite/config";
-import config from "../../conf/conf"
+import config from "../../conf/conf";
 import Image from "next/image";
 import FileContainer from "../components/FileContainer";
 
@@ -25,7 +25,6 @@ const Upload = () => {
   const router = useRouter();
 
   //TODO: use useEffect to fetch courses
-
 
   //useEffect(() => {
   // const fetchData = async () => {
@@ -93,30 +92,37 @@ const Upload = () => {
   const [imgfileID, setImgFileID] = useState("");
   const [docfileID, setDocFileID] = useState("");
 
+  const [fileEvents, setFileEvents] = useState({
+    fileEvent: "",
+    imgEvent: "",
+  });
+
   const fileHandler = service;
 
-
-  useEffect(()=>{
+  useEffect(() => {
     const fetchData = async () => {
       const courseData = await fileHandler.getAllDocs("Course");
-      console.log(courseData)
-      const courseArr = courseData.documents.map(course => course.Title) 
+      console.log(courseData);
+      const courseArr = courseData.documents.map((course) => course.Title);
       setCourses(courseArr);
-    }
+    };
     fetchData();
-  }
-,[])
+  }, []);
 
-  const handleFileUpload = async (event) => {
-    const selectedFile = event.target.files[0];
+  const handleFileUpload = async (file) => {
+    const selectedFile = file;
 
     if (selectedFile) {
       try {
         setIsUploadInProgress(true);
         const response = await fileHandler.uploadFile("Docs", selectedFile);
-        setDocFileID(response.$id);
-        console.log("Doc File upload response", response);
+        // console.log("Doc File upload response", response);
+        
+        setTimeout(()=>setDocFileID(response.$id) ,100)
+        console.log("file id", docfileID);
+        console.log("file id res",response.$id);
         setIsDocFilesUploaded(true);
+        return response;
       } catch (error) {
         console.log("Error occurred while uploading file", error);
       } finally {
@@ -127,27 +133,22 @@ const Upload = () => {
     }
   };
 
-  const handleCoverPageUpload = async (event) => {
-    const selectedFile = event.target.files[0];
+  const handleCoverPageUpload = async (file) => {
+    const selectedFile = file ;
 
     if (selectedFile) {
-      // const storageRef = firebase.storage().ref();
-      // const fileRef = storageRef.child(selectedFile.name);
-
-      // fileRef.put(selectedFile).then((snapshot) => {
-      //   snapshot.ref.getDownloadURL().then((downloadURL) => {
-      //     console.log(downloadURL);
-      //     setFileURL(downloadURL);
-      //     setCoverPageURL(downloadURL);
-      //   });
-      // });
-
       try {
         setIsUploadInProgress(true);
         const response = await fileHandler.uploadFile("Image", selectedFile);
-        setImgFileID(response.$id);
-        console.log("Image File upload response", response);
+        // console.log("Image File upload response", response);
+        console.log("img id", imgfileID);  
+        console.log("file id res",response.$id);
+
+        // setImgFileID(response.$id);
+        setTimeout(()=>setImgFileID(response.$id) ,100)
+
         setIsImgFilesUploaded(true);
+        return response;
       } catch (error) {
         console.log("Error occurred while uploading file", error);
       } finally {
@@ -158,29 +159,56 @@ const Upload = () => {
     }
   };
 
-  const uploadClicked = async () => {
-    
-
+  const dataUpload = async () => {
     try {
-      const response = fileHandler.uploadData({
-        collectionName: "Books",
-        title: resourceTitle,
-        docID: docfileID,
-        coverImage: `https://cloud.appwrite.io/v1/storage/buckets/${config.imageBucketID}/files/${imgfileID}/view?project=${config.projectID}`
-      },{
-        docFileID:docfileID,
-        imageFileID:imgfileID,
-        author:bookAuthorName,
-        edition:bookEdition,
-        course:userCourse,
-        file:`https://cloud.appwrite.io/v1/storage/buckets/${config.docsBucketID}/files/${docfileID}/view?project=${config.projectID}`,
-      });
-      console.log("data upload res",response)  
+      const response = await fileHandler.uploadData(
+        {
+          collectionName: "Books",
+          title: resourceTitle,
+          docID: docfileID,
+          coverImage: `https://cloud.appwrite.io/v1/storage/buckets/${config.imageBucketID}/files/${imgfileID}/view?project=${config.projectID}`,
+        },
+        {
+          docFileID: docfileID,
+          imageFileID: imgfileID,
+          author: bookAuthorName,
+          edition: bookEdition,
+          course: userCourse,
+          file: `https://cloud.appwrite.io/v1/storage/buckets/${config.docsBucketID}/files/${docfileID}/view?project=${config.projectID}`,
+        }
+      );
+      console.log("data upload res", response);
+      return response;
     } catch (error) {
-      
+      console.log(error);
     }
 
-    console.log("clicked");
+    
+  };
+
+  const uploadClicked = async () => {
+    const imgFileEvent = fileEvents.imgEvent;
+    const docFileEvent = fileEvents.fileEvent;
+
+    try {
+      const docResponse = await handleFileUpload(docFileEvent);
+      console.log("Document File upload response", docResponse);
+      // Upload cover image file
+      const imgResponse = await handleCoverPageUpload(imgFileEvent);
+      console.log("Image File upload response", imgResponse);
+
+      // Proceed with data upload only if both file uploads are successful
+      if (docResponse && imgResponse) {
+        const dataResponse = await dataUpload();
+        console.log("Data uploaded successfully",dataResponse);
+      } else {
+        console.log("File upload failed");
+      }
+    } catch (error) {
+      console.error("Error occurred during upload:", error);
+    }
+
+   
   };
 
   return (
@@ -326,7 +354,13 @@ const Upload = () => {
               <input
                 type="file"
                 className="pl-2 mt-5 justify-center"
-                onChange={(e) => handleFileUpload(e)}
+                onChange={(e) =>
+                  setFileEvents((prev) => ({
+                    ...prev,
+                    fileEvent: e.target.files[0],
+                  }))
+                }
+                disabled={isUploadInProgress}
               />
             </div>
 
@@ -335,7 +369,13 @@ const Upload = () => {
               <input
                 type="file"
                 className="pl-2 mt-5 justify-center"
-                onChange={(e) => handleCoverPageUpload(e)}
+                onChange={(e) =>
+                  setFileEvents((prev) => ({
+                    ...prev,
+                    imgEvent: e.target.files[0],
+                  }))
+                }
+                disabled={isUploadInProgress}
               />
             </div>
           </div>
