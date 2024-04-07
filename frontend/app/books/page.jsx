@@ -28,6 +28,7 @@ const Books = () => {
         setBooks(data.documents);
         setLoading(false);
         console.log("response", data);
+       
       } catch (err) {
         console.log("Somethin went wrong", err);
       }
@@ -94,17 +95,19 @@ const Books = () => {
         ) : (
           // Render your book components once data is fetched
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {books
-              .filter((book) => {
+            
+              {/* .filter((book) => {
                 return book.course.Title.toLowerCase() === ""
                   ? book
                   : book.title.toLowerCase().includes(course) ||
                     author.toLowerCase() === ""
                   ? book
                   : book.author.toLowerCase().includes(author);
-              })
+              }) */}
+            {
+              (books
               .map((book, index) => (
-                book.is_approved ? 
+                book? 
                 <BookComponent
                   key={index}
                   cover={book.cover_page}
@@ -113,7 +116,7 @@ const Books = () => {
                   file={book.file}
                   imgAlt="Book"
                 /> : null
-              ))}
+              )))}
           </div>
         )}
       </div>

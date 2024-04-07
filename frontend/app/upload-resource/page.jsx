@@ -1,50 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
 import DropdownBox from "../components/DropdownBox";
 import { useRouter } from "next/navigation";
 import service from "@/appwrite/config";
 import config from "../../conf/conf";
-import Image from "next/image";
-import FileContainer from "../components/FileContainer";
-
-import axios from "axios";
-// const firebaseConfig = {
-//   apiKey: "AIzaSyBh-8G4kOXSBYzcoHzjC_R0QZo8frsZnPY",
-//   authDomain: "notevault-5684a.firebaseapp.com",
-//   projectId: "notevault-5684a",
-//   storageBucket: "notevault-5684a.appspot.com",
-//   messagingSenderId: "118095513364",
-//   appId: "1:118095513364:web:07f431474bdc7c100da401",
-//   measurementId: "G-TNBL9KNV7J",
-// };
-
-//firebase.initializeApp(firebaseConfig);
 
 const Upload = () => {
-  const router = useRouter();
-
-  //TODO: use useEffect to fetch courses
-
-  //useEffect(() => {
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get("http://localhost:8000/api/upload/", {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //       },
-  //     });
-  //     console.log("Response", response);
-  //     setCourses(response.data.courses);
-
-  //}
-  //    catch (e) {
-  //      console.log(e);
-  //    }
-  //  };
-  //  fetchData();
-  //}, []);
+  // const router = useRouter();
 
   // list of options for rendering different options
   const [courses, setCourses] = useState([]);
@@ -83,14 +45,14 @@ const Upload = () => {
   const [videoLink, setVideoLink] = useState("");
 
   // file data
-  const [fileURL, setFileURL] = useState("");
-  const [coverPageURL, setCoverPageURL] = useState("");
+  // const [fileURL, setFileURL] = useState("");
+  // const [coverPageURL, setCoverPageURL] = useState("");
 
   const [isUploadInProgress, setIsUploadInProgress] = useState(false);
-  const [isImgFilesUploaded, setIsImgFilesUploaded] = useState(false);
-  const [isDocFilesUploaded, setIsDocFilesUploaded] = useState(false);
-  const [imgfileID, setImgFileID] = useState("");
-  const [docfileID, setDocFileID] = useState("");
+  // const [isImgFilesUploaded, setIsImgFilesUploaded] = useState(false);
+  // const [isDocFilesUploaded, setIsDocFilesUploaded] = useState(false);
+  let imgfileID = "";
+  let docfileID = "";
 
   const [fileEvents, setFileEvents] = useState({
     fileEvent: "",
@@ -102,9 +64,8 @@ const Upload = () => {
   useEffect(() => {
     const fetchData = async () => {
       const courseData = await fileHandler.getAllDocs("Course");
-      console.log(courseData);
-      const courseArr = courseData.documents.map((course) => course.Title);
-      setCourses(courseArr);
+      console.log(courseData)
+      setCourses(courseData.documents);
     };
     fetchData();
   }, []);
@@ -117,11 +78,8 @@ const Upload = () => {
         setIsUploadInProgress(true);
         const response = await fileHandler.uploadFile("Docs", selectedFile);
         // console.log("Doc File upload response", response);
-        
-        setTimeout(()=>setDocFileID(response.$id) ,100)
-        console.log("file id", docfileID);
-        console.log("file id res",response.$id);
-        setIsDocFilesUploaded(true);
+        console.log("file id res", response.$id);
+        // setIsDocFilesUploaded(true);
         return response;
       } catch (error) {
         console.log("Error occurred while uploading file", error);
@@ -134,20 +92,17 @@ const Upload = () => {
   };
 
   const handleCoverPageUpload = async (file) => {
-    const selectedFile = file ;
+    const selectedFile = file;
 
     if (selectedFile) {
       try {
         setIsUploadInProgress(true);
         const response = await fileHandler.uploadFile("Image", selectedFile);
+
+        console.log("file id res", response.$id);
+
         // console.log("Image File upload response", response);
-        console.log("img id", imgfileID);  
-        console.log("file id res",response.$id);
-
-        // setImgFileID(response.$id);
-        setTimeout(()=>setImgFileID(response.$id) ,100)
-
-        setIsImgFilesUploaded(true);
+        // setIsImgFilesUploaded(true);
         return response;
       } catch (error) {
         console.log("Error occurred while uploading file", error);
@@ -161,6 +116,8 @@ const Upload = () => {
 
   const dataUpload = async () => {
     try {
+      console.log("from dp",imgfileID);
+      console.log("from dp",docfileID);
       const response = await fileHandler.uploadData(
         {
           collectionName: "Books",
@@ -182,8 +139,6 @@ const Upload = () => {
     } catch (error) {
       console.log(error);
     }
-
-    
   };
 
   const uploadClicked = async () => {
@@ -191,24 +146,27 @@ const Upload = () => {
     const docFileEvent = fileEvents.fileEvent;
 
     try {
-      const docResponse = await handleFileUpload(docFileEvent);
+      const docResponse = await handleFileUpload(docFileEvent)
+      docfileID = docResponse.$id;
+
       console.log("Document File upload response", docResponse);
       // Upload cover image file
       const imgResponse = await handleCoverPageUpload(imgFileEvent);
+    
+      imgfileID = imgResponse.$id;
+      
       console.log("Image File upload response", imgResponse);
 
       // Proceed with data upload only if both file uploads are successful
       if (docResponse && imgResponse) {
         const dataResponse = await dataUpload();
-        console.log("Data uploaded successfully",dataResponse);
+        console.log("Data uploaded successfully", dataResponse);
       } else {
         console.log("File upload failed");
       }
     } catch (error) {
       console.error("Error occurred during upload:", error);
     }
-
-   
   };
 
   return (
@@ -223,7 +181,8 @@ const Upload = () => {
         <div className="w-2/6 flex flex-col">
           <DropdownBox
             title="Course"
-            options={courses}
+            options={courses.map(c => c.Title)}
+            data={courses}
             mt={5}
             setUserCourse={setUserCourse}
           />

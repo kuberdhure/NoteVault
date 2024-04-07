@@ -41,23 +41,29 @@ const Material = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const booksResponse = await service.getAllDocs("Books", [
-          Query.equal("course", course),
-          Query.equal("is_approved", true),
-        ]);
+        const booksResponse = await service.getAllDocs("Books"
+        // , [
+        //   Query.equal("course", String(course)),
+        // //   Query.equal("is_approved", true),
+        // ]
+        );
         // const notesResponse = service.getAllDocs("Books",[Query.select(["course",String(course)]),Query.equal("is_approved",true)])
         // const papersResponse = service.getAllDocs("Books",[Query.select(["course",String(course)]),Query.equal("is_approved",true)])
         // const videosResponse = service.getAllDocs("Books",[Query.select(["course",String(course)]),Query.equal("is_approved",true)])
 
-        setData((prevData) => ({
-          ...prevData,
-          books: [...prevData.books, booksResponse.documents],
-          // notes: [...prevData.notes, notesResponse.documents],
-          // papers: [...prevData.papers, papersResponse.documents],
-          // videos: [...prevData.videos, videosResponse.documents],
-        }));
-
-        console.log("Response", booksResponse);
+        if(booksResponse.length > 0){
+            setData((prevData) => ({
+                ...prevData,
+                books: booksResponse.documents,
+                // notes: [...prevData.notes, notesResponse.documents],
+                // papers: [...prevData.papers, papersResponse.documents],
+                // videos: [...prevData.videos, videosResponse.documents],
+              }));
+      
+        }
+        
+        console.log("Response", booksResponse.documents);
+        console.log("data", data.books);
       } catch (e) {
         console.log(e);
       }
@@ -72,7 +78,7 @@ const Material = () => {
       </h2>
 
       <div className="grid grid-cols-1 mb-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3">
-        {data.books.length <= 0 ? (
+        {data.books? (
           data.books.map((book, index) => {
             <BookComponent
               key={book.$id}

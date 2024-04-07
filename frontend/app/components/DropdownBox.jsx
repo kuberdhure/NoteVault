@@ -21,7 +21,9 @@ const DropdownBox = (props) => {
         }
 
         if (props.setUserCourse) {
-            props.setUserCourse(selectedValue)
+            let val = props.data.filter(course => course.Title === selectedValue)
+            console.log(val);
+            props.setUserCourse(val.length > 0 ? val[0].$id:{})
         }
 
         if (props.setPaperYear) {
@@ -36,7 +38,7 @@ const DropdownBox = (props) => {
             props.setBook(false);
             props.setIsLink(false);
             props.setIsQuestionPaper(true)
-            props.setMaterialType(selectedValue.$id);
+            props.setMaterialType(selectedValue);
 
         }
 
@@ -44,7 +46,7 @@ const DropdownBox = (props) => {
             props.setBook(false);
             props.setIsQuestionPaper(false)
             props.setIsLink(true);
-            props.setMaterialType(selectedValue.$id);
+            props.setMaterialType(selectedValue);
 
         }
 
@@ -52,7 +54,7 @@ const DropdownBox = (props) => {
             props.setIsQuestionPaper(false)
             props.setIsLink(false);
             props.setBook(true);
-            props.setMaterialType(selectedValue.$id);
+            props.setMaterialType(selectedValue);
 
         }
 
@@ -60,7 +62,7 @@ const DropdownBox = (props) => {
             props.setIsQuestionPaper(false)
             props.setIsLink(false);
             props.setBook(false);
-            props.setMaterialType(selectedValue.$id);
+            props.setMaterialType(selectedValue);
 
         }
 
