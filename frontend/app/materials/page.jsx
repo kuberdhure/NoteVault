@@ -10,7 +10,6 @@ import service from "@/appwrite/config";
 import { Query } from "appwrite";
 import dynamic from "next/dynamic";
 
-
 const Material = () => {
   const slideLeft = () => {
     var slider = document.getElementById("slider");
@@ -33,43 +32,51 @@ const Material = () => {
   const course = useSearchParams().get("courseName");
   const [data, setData] = useState({
     books: [],
-    notes: [],
-    videos: [],
-    papers: [],
+    // notes: [],
+    // videos: [],
+    // papers: [],
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const booksResponse = await service.getAllDocs("Books"
-        // , [
-        //   Query.equal("course", String(course)),
-        // //   Query.equal("is_approved", true),
-        // ]
-        );
-        // const notesResponse = service.getAllDocs("Books",[Query.select(["course",String(course)]),Query.equal("is_approved",true)])
-        // const papersResponse = service.getAllDocs("Books",[Query.select(["course",String(course)]),Query.equal("is_approved",true)])
-        // const videosResponse = service.getAllDocs("Books",[Query.select(["course",String(course)]),Query.equal("is_approved",true)])
+        const [booksResponse, notesResponse, videosResponse] =
+          await Promise.all([
+            service.getAllDocs("Books"),
+            service.getAllDocs("Notes"),
+            service.getAllDocs("Videos"),
+          ]);
 
-        if(booksResponse.length > 0){
-            setData((prevData) => ({
-                ...prevData,
-                books: booksResponse.documents,
-                // notes: [...prevData.notes, notesResponse.documents],
-                // papers: [...prevData.papers, papersResponse.documents],
-                // videos: [...prevData.videos, videosResponse.documents],
-              }));
-      
-        }
-        
-        console.log("Response", booksResponse.documents);
-        console.log("data", data.books);
+        const filteredBooks = booksResponse.documents.filter(
+          (book) => book.course.Title === course
+        );
+        const filteredNotes = notesResponse.documents.filter(
+          (note) => note.course.Title === course
+        );
+        const filteredVideos = videosResponse.documents.filter(
+          (vid) => vid.course.Title === course
+        );
+
+        setData({
+          books: filteredBooks,
+          notes: filteredNotes,
+          videos: filteredVideos,
+        });
+
+        console.log("Response", {
+          books: filteredBooks,
+          notes: filteredNotes,
+          videos: filteredVideos,
+        });
       } catch (e) {
         console.log(e);
       }
     };
     fetchData();
   }, []);
+  useEffect(() => {
+    console.log("data", data.books);
+  }, [data]);
 
   return (
     <div>
@@ -77,22 +84,27 @@ const Material = () => {
         Books for {course}
       </h2>
 
-      <div className="grid grid-cols-1 mb-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3">
-        {data.books? (
-          data.books.map((book, index) => {
-            <BookComponent
-              key={book.$id}
-              cover="/book.png"
-              title={book.title}
-              author={book.author}
-              domain={course}
-              imgAlt={book.title}
-            />;
+      <div
+        className="grid grid-cols-1 mb-2 sm:grid-cols-
+      2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3"
+      >
+        {data.books ? (
+          data.books.map((item, index) => {
+            return (
+              <BookComponent
+                key={index}
+                cover={item.cover_page}
+                title={item.title}
+                domain={item.course ? item.course.Title : ""}
+                author={item.author}
+                imgAlt={"Book"}
+                file={item.file}
+                views={item.views}
+              />
+            );
           })
         ) : (
-          <>
-            <h3> No Books available ! </h3>
-          </>
+          <>No Books Available</>
         )}
       </div>
       <h2 className="font-semibold text-2xl mb-2 mt-2 ml-2">
@@ -109,21 +121,22 @@ const Material = () => {
           id="slider"
           className="w-full h-full overflow-x-scroll flex flex-row scroll whitespace-nowrap scroll-smooth scrollbar-hide"
         >
-          
-          <BookComponent
-            cover="/book.png"
-            title="Introduction to Algorithms"
-            domain="Data Structures"
-            author="Thomas Cormen"
-            imgAlt={"Book"}
-          />
-          <BookComponent
-            cover="/book.png"
-            title="Introduction to Algorithms"
-            domain="Data Structures"
-            author="Thomas Cormen"
-            imgAlt={"Book"}
-          />
+          {data.notes ? (
+            data.notes.map((item) => {
+              return (
+                <ReactPlayer
+                  controls={true}
+                  light={false}
+                  style={{ margin: "8px" }}
+                  width="300px"
+                  height="240px"
+                  url={item.link}
+                />
+              );
+            })
+          ) : (
+            <></>
+          )}
         </div>
         <MdChevronRight
           className="opacity-50 cursor-pointer hover:opacity-100"
@@ -144,12 +157,22 @@ const Material = () => {
           id="slider1"
           className="w-full h-full mb-2 overflow-x-scroll flex flex-row scroll whitespace-nowrap scroll-smooth scrollbar-hide"
         >
-          <ReactPlayer
-            controls={true}
-            light={true}
-            style={{ margin: "2px" }}
-            url="https://youtu.be/WdmbZnUesRw?feature=shared"
-          />
+          {data.videos ? (
+            data.videos.map((item) => {
+              return (
+                <ReactPlayer
+                  controls={true}
+                  light={false}
+                  style={{ margin: "8px" }}
+                  width="300px"
+                  height="240px"
+                  url={item.link}
+                />
+              );
+            })
+          ) : (
+            <></>
+          )}
         </div>
         <MdChevronRight
           className="opacity-50 cursor-pointer hover:opacity-100"
@@ -160,5 +183,4 @@ const Material = () => {
     </div>
   );
 };
-export default dynamic (() => Promise.resolve(Material), {ssr: false})
-
+export default dynamic(() => Promise.resolve(Material), { ssr: false });

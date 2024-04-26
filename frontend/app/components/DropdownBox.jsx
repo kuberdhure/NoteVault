@@ -9,7 +9,7 @@ const DropdownBox = (props) => {
 
 
     const selectedValue = React.useMemo(
-        () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
+        () => Array.from(selectedKeys).join(", "),
         [selectedKeys]
     );
 
@@ -22,7 +22,6 @@ const DropdownBox = (props) => {
 
         if (props.setUserCourse) {
             let val = props.data.filter(course => course.Title === selectedValue)
-            console.log(val);
             props.setUserCourse(val.length > 0 ? val[0].$id:{})
         }
 
@@ -50,7 +49,7 @@ const DropdownBox = (props) => {
 
         }
 
-        else if (selectedValue == "Reference Book") {
+        else if (selectedValue == "Books") {
             props.setIsQuestionPaper(false)
             props.setIsLink(false);
             props.setBook(true);
@@ -71,9 +70,10 @@ const DropdownBox = (props) => {
 
     return (
 
-        <Dropdown>
-            <DropdownTrigger>
+        <Dropdown aria-label="dropdwn">
+            <DropdownTrigger aria-label="dropdwn">
                 <Button
+                    aria-labelledby="button"
                     variant="bordered"
                     className={`capitalize border border-black px-4 rounded-md hover:border-gray-950 shadow-md text-lg w-2/3 mt-${props.mt} mb-${props.mb} bg-white`}
                 >
@@ -88,9 +88,10 @@ const DropdownBox = (props) => {
                 selectedKeys={selectedKeys}
                 onSelectionChange={setSelectedKeys}
                 className='border-black max-h-96 overflow-auto'
+                aria-label="dropdwn"
             >
                 {props.options.map((option) => (
-                    <DropdownItem className='z-10 bg-white' key={option}>{option}</DropdownItem>
+                    <DropdownItem aria-labelledby={option} className='z-10 bg-white' key={option}>{option}</DropdownItem>
                 ))
                 }
 

@@ -54,10 +54,8 @@ async uploadData(
   ) {
     const collectionNames = [
       "Books",
-      "Course",
       "Notes",
       "Papers",
-      "Users",
       "Videos",
     ];
     let collectionId = "";
@@ -75,20 +73,40 @@ async uploadData(
               edition: extras.edition?extras.edition:null,
               cover_page: coverImage,
               course: extras.course,
-              imageFileID:extras.imageFileID,
-              docFileID:extras.docFileID
+              imgFileId:extras.imageFileID,
+              docFileID:docID
             };
-          } else if (collectionName === "Course") {
-            collectionId = config.courseCollectionID;
           } else if (collectionName === "Notes") {
             collectionId = config.notesCollectionID;
+            data = {
+              title:title,
+              file:extras.file,
+              cover_page:coverImage,
+              course:extras.course
+            }
           } else if (collectionName === "Papers") {
+            data = {
+              title:title,
+              file:extras.file,
+              cover_page:coverImage,
+              course:extras.course,
+              CATEGORY_CHOICES:extras.category,
+              year:extras.year,
+              is_approved: false,
+              approved_on: null,
+            }
+            console.log(data.CATEGORY_CHOICES)
             collectionId = config.papersCollectionID;
           } else if (collectionName === "Users") {
             collectionId = config.usersCollectionID;
           } else if (collectionName === "Videos") {
             collectionId = config.videosCollectionID;
-          }
+            data={
+              title:title,
+              link:extras.link,
+              course:extras.course
+              }
+            }
     } else {
       throw "Invalid Collection Name";
     }
@@ -97,7 +115,7 @@ async uploadData(
       return await this.databases.createDocument(
         config.databaseID,
         collectionId,
-        docID,
+        ID.unique(),
         data
       );
     } catch (error) {
@@ -105,7 +123,7 @@ async uploadData(
     }
   }
 
-  async updateDoc(docID,collectionName, { title , is_approved }) {
+  async updateDoc(docID,collectionName, { title , is_approved , views }) {
     let collectionID = this.mapCollectionName(collectionName);
     console.log("from config",collectionName,collectionID)
     try {
@@ -115,10 +133,11 @@ async uploadData(
         docID,
         {
           is_approved,
+          views
         }
       );
     } catch (error) {
-      console.log("Appwrite service :: updatePost :: error", error);
+      console.log("Appwrite service :: updatePost :: error", error.message);
     }
   }
 
@@ -187,8 +206,8 @@ async uploadData(
   async deleteFile(imageFileId,docFileId) {
  
     try {
-      await this.bucket.deleteFile(config.docsBucketID, imageFileId );
-      await this.bucket.deleteFile(config.imageBucketID, docFileId );
+      await this.bucket.deleteFile(config.docsBucketID, docFileId);
+      await this.bucket.deleteFile(config.imageBucketID,imageFileId);
       return true;
     } catch (error) {
       console.log("Appwrite service :: deleteFile :: error", error);
@@ -202,6 +221,20 @@ async uploadData(
 
   getImagePreview(fileId) {
     return this.bucket.getFilePreview(config.imageBucketID, fileId);
+  }
+  /**
+ * This function gets the popular book from database
+ * * @param {string} collectionName
+ */
+  async getPopularDocs(collectionName){
+    let collectionId = this.mapCollectionName(collectionName);
+    try {
+      const res = await this.databases.listDocuments(config.databaseID,collectionId,[Query.greaterThan("views",15)])
+      console.log(res)
+      return res;
+    } catch (error) {
+      console.error(error);   
+    }
   }
 }
 

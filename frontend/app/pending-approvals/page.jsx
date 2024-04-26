@@ -43,25 +43,34 @@ const PendingApprovals = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const approvalData = await service.getAllDocs("Books", [
+      const approvalBooksData = await service.getAllDocs("Books", [
         Query.equal("is_approved", false),
       ]);
-      console.log(approvalData);
-      setBooks(approvalData.documents);
+      const approvalNotesData = await service.getAllDocs("Notes", [
+        Query.equal("is_approved", false),
+      ]);
+      console.log(approvalNotesData);
+      setBooks(approvalBooksData.documents);
+      setNotes(approvalNotesData.documents);
+      console.log(approvalBooksData.documents)
       setLoading(false);
     };
     console.log("useeeffect")
     getData();
   }, []);
 
-  const handleApprovalRejection = (bookId) =>{
-    setBooks(books => books.filter(book => book.$id != bookId));
+  const handleApprovalRejection = (bookId,NotesId) =>{
+    if(bookId){
+      setBooks(books => books.filter(book => book.$id != bookId));
+    }else if(NotesId){
+      setNotes(Notes => Notes.filter(Note => Note.$id != NotesId))
+    }
   }
 
   return (
     <div>
       {/* <Header /> */}
-      <h1 className="text-2xl font-semibold mb-2 ml-5 mt-2">
+      <h1 className="text-2xl font-semibold mb-2 ml-5 mt-8">
         Recent Additions
       </h1>
       <div className="h-1.5 w-40 bg-black ml-5"></div>
@@ -86,22 +95,28 @@ const PendingApprovals = () => {
               key={index}
               id={book.$id}
               title={book.title}
-              course={book.course.Title}
+              course={book.course !== null?book.course.Title:""}
               type="Books"
               user={book.uploaded_by}
               docFileID={book.docFileID}
-              imageFileID={book.imageFileID}
+              imageFileID={book.imgFileId}
               handler={handleApprovalRejection}
+              file={book.file}
+              cover={book.cover_page}
             />
           ))}
           {notes.map((note, index) => (
             <Request
-              key={index}
-              id={note.id}
+              key={note.$id}
+              id={note.$id}
               title={note.title}
-              course={note.course}
+              course={note.course.Title}
               type="Notes"
-              user={note.uploaded_by}
+              user={note.uploaded_by ? note.uploaded_by : ""}
+              file={note.file}
+              cover={note.cover_page}
+              docFileID={note.docFileID}
+              imageFileID={note.imageFileID}
             />
           ))}
           {papers.map((paper, index) => (

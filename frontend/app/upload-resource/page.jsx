@@ -10,8 +10,8 @@ const Upload = () => {
 
   // list of options for rendering different options
   const [courses, setCourses] = useState([]);
-  const material = ["Reference Book", "Question Paper", "Notes", "Videos"];
-  const type = ["End Sem", "Mid Sem", "In Sem", "Quiz", "Assignment", "Others"];
+  const material = ["Books", "Question Paper", "Notes", "Videos"];
+  const type = ["End_Sem", "Mid_Sem", "In_Sem", "Quiz", "Assignment", "Others"];
 
   // list of years
   const startYear = 1995;
@@ -37,7 +37,7 @@ const Upload = () => {
   const [bookEdition, setBookEdition] = useState(0);
 
   // paper data
-  const [isSpit, setIsSpit] = useState(true);
+  const [isSakec, setisSakec] = useState(true);
   const [paperYear, setPaperYear] = useState(0);
   const [paperType, setPaperType] = useState("");
 
@@ -49,22 +49,96 @@ const Upload = () => {
   // const [coverPageURL, setCoverPageURL] = useState("");
 
   const [isUploadInProgress, setIsUploadInProgress] = useState(false);
-  // const [isImgFilesUploaded, setIsImgFilesUploaded] = useState(false);
-  // const [isDocFilesUploaded, setIsDocFilesUploaded] = useState(false);
-  let imgfileID = "";
-  let docfileID = "";
+  var imgfileID = "";
+  var docfileID = "";
+  let imgLink = "";
+  let fileLink = "";
 
   const [fileEvents, setFileEvents] = useState({
     fileEvent: "",
     imgEvent: "",
   });
 
+  function getResourceData(resourceType) {
+    const collectionData = {
+      Books: {
+        dataFormat: {
+          collectionName: "Books",
+          title: resourceTitle,
+          docID: docfileID,
+          coverImage: imgLink,
+        },
+        extras: {
+          imageFileID: imgfileID,
+          author: bookAuthorName,
+          edition: bookEdition,
+          course: userCourse,
+          file: fileLink,
+        },
+      },
+      Notes: {
+        dataFormat: {
+          collectionName: "Notes",
+          title: resourceTitle,
+          coverImage: imgLink,
+        },
+        extras: {
+          course: userCourse,
+          file: fileLink,
+        },
+      },
+      "Question paper": {
+        dataFormat: {
+          collectionName: "Papers",
+          title: resourceTitle,
+          docID: docfileID,
+          coverImage: imgLink,
+        },
+        extras: {
+          category: paperType,
+          year: paperYear,
+          course: userCourse,
+          file: fileLink,
+        },
+      },
+      Videos: {
+        dataFormat: {
+          collectionName: "Videos",
+          title: resourceTitle,
+        },
+        extras: {
+          link: videoLink,
+          course: userCourse,
+        },
+      },
+    };
+
+    console.log("hi", resourceType);
+    if (resourceType == "Books") {
+      return collectionData.Books;
+    } else if (resourceType == "Notes") {
+      return collectionData.Notes;
+    } else if (resourceType == "Question Paper") {
+      return collectionData["Question paper"];
+    } else if (resourceType == "Videos") {
+      return collectionData["Videos"];
+    }
+    // console.log(collectionData);
+    // if (collectionData.hasOwnProperty(resourceType)) {
+    // } else {
+    //   return {
+    //     dataFormat:{},
+    //     extras:{}
+    //   }; // Or handle error or default case as needed
+    // }
+  }
+
   const fileHandler = service;
 
   useEffect(() => {
     const fetchData = async () => {
       const courseData = await fileHandler.getAllDocs("Course");
-      console.log(courseData)
+      console.log(courseData);
       setCourses(courseData.documents);
     };
     fetchData();
@@ -116,25 +190,14 @@ const Upload = () => {
 
   const dataUpload = async () => {
     try {
-      console.log("from dp",imgfileID);
-      console.log("from dp",docfileID);
+      const item = getResourceData(materialType);
+
       const response = await fileHandler.uploadData(
-        {
-          collectionName: "Books",
-          title: resourceTitle,
-          docID: docfileID,
-          coverImage: `https://cloud.appwrite.io/v1/storage/buckets/${config.imageBucketID}/files/${imgfileID}/view?project=${config.projectID}`,
-        },
-        {
-          docFileID: docfileID,
-          imageFileID: imgfileID,
-          author: bookAuthorName,
-          edition: bookEdition,
-          course: userCourse,
-          file: `https://cloud.appwrite.io/v1/storage/buckets/${config.docsBucketID}/files/${docfileID}/view?project=${config.projectID}`,
-        }
+        item.dataFormat,
+        item.extras
       );
       console.log("data upload res", response);
+      console.log(item.dataFormat, item.extras);
       return response;
     } catch (error) {
       console.log(error);
@@ -146,23 +209,34 @@ const Upload = () => {
     const docFileEvent = fileEvents.fileEvent;
 
     try {
-      const docResponse = await handleFileUpload(docFileEvent)
-      docfileID = docResponse.$id;
+      if (materialType !== "Videos") {
+        const docResponse = await handleFileUpload(docFileEvent);
+        docfileID = docResponse.$id;
+        fileLink = `https://cloud.appwrite.io/v1/storage/buckets/${config.docsBucketID}/files/${docfileID}/view?project=${config.projectID}`;
 
-      console.log("Document File upload response", docResponse);
-      // Upload cover image file
-      const imgResponse = await handleCoverPageUpload(imgFileEvent);
-    
-      imgfileID = imgResponse.$id;
-      
-      console.log("Image File upload response", imgResponse);
+        console.log("Document File upload response", docResponse);
+        // Upload cover image file
+        if (materialType !== "Question Paper") {
+          const imgResponse = await handleCoverPageUpload(imgFileEvent);
+
+          imgfileID = imgResponse.$id;
+          console.log("imgFileId", imgfileID);
+          imgLink = `https://cloud.appwrite.io/v1/storage/buckets/${config.imageBucketID}/files/${imgfileID}/view?project=${config.projectID}`;
+
+          console.log("Image File upload response", imgResponse);
+        }
+      }
 
       // Proceed with data upload only if both file uploads are successful
-      if (docResponse && imgResponse) {
+      if (
+        (docfileID.length > 0 && imgfileID.length > 0) ||
+        materialType === "Videos" || (docfileID.length > 0 && materialType === "Question Paper")
+      ) {
         const dataResponse = await dataUpload();
         console.log("Data uploaded successfully", dataResponse);
       } else {
         console.log("File upload failed");
+        console.log("imgFileId", imgfileID);
       }
     } catch (error) {
       console.error("Error occurred during upload:", error);
@@ -181,7 +255,7 @@ const Upload = () => {
         <div className="w-2/6 flex flex-col">
           <DropdownBox
             title="Course"
-            options={courses.map(c => c.Title)}
+            options={courses.map((c) => c.Title)}
             data={courses}
             mt={5}
             setUserCourse={setUserCourse}
@@ -207,7 +281,9 @@ const Upload = () => {
                     type="radio"
                     value="SPIT"
                     name="paper"
-                    onChange={(e) => setIsSpit(e.target.value === "SPIT")}
+                    onChange={(e) =>
+                      setisSakec(e.target.value.toLowerCase() === "sakec")
+                    }
                   />{" "}
                   SAKEC
                 </div>
@@ -216,7 +292,7 @@ const Upload = () => {
                     type="radio"
                     value="Other"
                     name="paper"
-                    onChange={(e) => setIsSpit(e.target.value === "SPIT")}
+                    onChange={(e) => setisSakec(e.target.value === "sakec")}
                   />{" "}
                   Other University
                 </div>
@@ -250,6 +326,7 @@ const Upload = () => {
                 type="text"
                 id="link"
                 placeholder="Paste link here"
+
                 onChange={(e) => setVideoLink(e.target.value)}
               />
             </div>
@@ -323,20 +400,22 @@ const Upload = () => {
               />
             </div>
 
-            <div className="flex flex-col items-center justify-center ml-10 border-2 border-dashed border-black rounded-md">
-              <div>Upload Cover-Page Here</div>
-              <input
-                type="file"
-                className="pl-2 mt-5 justify-center"
-                onChange={(e) =>
-                  setFileEvents((prev) => ({
-                    ...prev,
-                    imgEvent: e.target.files[0],
-                  }))
-                }
-                disabled={isUploadInProgress}
-              />
-            </div>
+            {materialType !== "Question Paper" ? (
+              <div className="flex flex-col items-center justify-center ml-10 border-2 border-dashed border-black rounded-md">
+                <div>Upload Cover-Page Here</div>
+                <input
+                  type="file"
+                  className="pl-2 mt-5 justify-center"
+                  onChange={(e) =>
+                    setFileEvents((prev) => ({
+                      ...prev,
+                      imgEvent: e.target.files[0],
+                    }))
+                  }
+                  disabled={isUploadInProgress}
+                />
+              </div>
+            ) : null}
           </div>
         ) : (
           <></>

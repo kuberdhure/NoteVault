@@ -9,6 +9,8 @@ const rejectResource = async (docID,collection,imageFileId, docFileID) => {
     console.log("delete files",deleteFileResponse);
     console.log("delete doc",deleteDocResponse);
 
+    console.log("img",imageFileId)
+    console.log("doc",docFileID)
   } catch (error) {
     console.error(error);
   }
@@ -25,7 +27,8 @@ const RejectButton = ({docId,collection,docFileID,imageFileID}) => {
           alt="Reject Button"
           className="transition duration-300 ease-in-out transform hover:scale-110 hover:filter hover:brightness-110"
           onClick={() => {
-            rejectResource(docId,collection,docFileID,imageFileID);
+            console.log("imgg",imageFileID)
+            rejectResource(docId,collection,imageFileID, docFileID);
           }}
         />
       </div>
