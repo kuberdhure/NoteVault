@@ -30,12 +30,9 @@ const Material = () => {
     slider1.scrollLeft = slider1.scrollLeft + 500;
   };
   const course = useSearchParams().get("courseName");
-  const [data, setData] = useState({
-    books: [],
-    // notes: [],
-    // videos: [],
-    // papers: [],
-  });
+  const [books,setBooks] = useState([])
+  const [notes,setNotes] = useState([])
+  const [videos,setVideos] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,11 +54,9 @@ const Material = () => {
           (vid) => vid.course.Title === course
         );
 
-        setData({
-          books: filteredBooks,
-          notes: filteredNotes,
-          videos: filteredVideos,
-        });
+        setBooks(filteredBooks)
+        setNotes(filteredNotes)
+        setVideos(filteredVideos)
 
         console.log("Response", {
           books: filteredBooks,
@@ -74,9 +69,7 @@ const Material = () => {
     };
     fetchData();
   }, []);
-  useEffect(() => {
-    console.log("data", data.books);
-  }, [data]);
+;
 
   return (
     <div>
@@ -88,17 +81,19 @@ const Material = () => {
         className="grid grid-cols-1 mb-2 sm:grid-cols-
       2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3"
       >
-        {data.books ? (
-          data.books.map((item, index) => {
+        {books ? (
+          books.map((item, index) => {
             return (
               <BookComponent
-                key={index}
+                id={item.$id}
+                key={item.$id}
                 cover={item.cover_page}
                 title={item.title}
                 domain={item.course ? item.course.Title : ""}
                 author={item.author}
                 imgAlt={"Book"}
                 file={item.file}
+                setBooks={setBooks}
                 views={item.views}
               />
             );
@@ -118,20 +113,24 @@ const Material = () => {
           size={40}
         />
         <div
-          id="slider"
-          className="w-full h-full overflow-x-scroll flex flex-row scroll whitespace-nowrap scroll-smooth scrollbar-hide"
-        >
-          {data.notes ? (
-            data.notes.map((item) => {
+        className="grid grid-cols-2 mb-4 sm:grid-cols-
+      2 md:grid-cols-3 lg:grid-cols-5 gap-1 ml-10 pt-3"
+      >
+          {notes ? (
+            notes.map((item,index) => {
               return (
-                <ReactPlayer
-                  controls={true}
-                  light={false}
-                  style={{ margin: "8px" }}
-                  width="300px"
-                  height="240px"
-                  url={item.link}
-                />
+                <BookComponent
+                id={item.$id}
+                key={item.$id}
+                cover={item.cover_page}
+                title={item.title}
+                domain={item.course ? item.course.Title : ""}
+                author={item.author}
+                imgAlt={"Book"}
+                file={item.file}
+                views={item.views}
+                setBooks={setNotes}
+              />
               );
             })
           ) : (
@@ -157,10 +156,11 @@ const Material = () => {
           id="slider1"
           className="w-full h-full mb-2 overflow-x-scroll flex flex-row scroll whitespace-nowrap scroll-smooth scrollbar-hide"
         >
-          {data.videos ? (
-            data.videos.map((item) => {
+          {videos ? (
+            videos.map((item) => {
               return (
                 <ReactPlayer
+                  key={item.$id}
                   controls={true}
                   light={false}
                   style={{ margin: "8px" }}

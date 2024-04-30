@@ -96,7 +96,7 @@ const Upload = () => {
         },
         extras: {
           category: paperType,
-          year: paperYear,
+          year: parseInt(paperYear),
           course: userCourse,
           file: fileLink,
         },

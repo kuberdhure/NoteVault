@@ -62,7 +62,7 @@ function BookComponent(props) {
 
   return (
     <div className="w-70  max-h-140 rounded-md pt-2 overflow-hidden m-4 shadow-lg hover:bg-green-400 scale-120">
-      {/* <Link href={props.file ? props.file : ""}> */}
+      <Link href={props.file ? props.file : ""}>
       <div onClick={() => (updateViews(props.id))}>
         <img
           className="w-full object-scale-down max-h-60 my-4"
@@ -70,11 +70,11 @@ function BookComponent(props) {
           alt="Sunset in the mountains"
         />
       </div>
-      {/* </Link> */}
+      </Link>
       <div className="my-4 px-4 py-4">
         <div className="font-bold text-xl mb-2">{props.title}</div>
         <p className="text-gray-700 text-base">{props.author}</p>
-        <p>views : {props.views}</p>
+        <p>views : {props.views ? props.views : "No views"}</p>
       </div>
     </div>
   );

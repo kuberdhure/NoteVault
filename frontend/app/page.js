@@ -152,7 +152,7 @@ function Home() {
           <Link href="/notes">
             <Browse browse_image={"/Notes.png"} browse_name={"Notes"} />
           </Link>
-          <Browse browse_image={"/video.png"} browse_name={"Videos"} />
+          {/* <Browse browse_image={"/video.png"} browse_name={"Videos"} /> */}
         </div>
       </div>
     </div>
